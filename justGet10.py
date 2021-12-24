@@ -27,6 +27,9 @@ class Cell():
         self.randomState()
         self.changeColor()
 
+
+    # Getters
+    
     def getInfo(self):
         return self.__state, self. __color
 
@@ -42,6 +45,9 @@ class Cell():
     def getHighlight(self):
         return self.__highlighted
 
+    
+    # Setters
+    
     def setHighlight(self, val):
         self.__highlighted = val
 
@@ -52,6 +58,9 @@ class Cell():
     def setColor(self, color):
         self.__color = color
 
+    
+    # Methods
+    
     def randomState(self):
         rdm = random()
 
@@ -83,26 +92,41 @@ class Table():
         self.__col = col
 
         self.__grid = self.initGrid()
-
+    
+    
+    # Getters
+    
     def getRow(self):
         return self.__row
 
     def getCol(self):
         return self.__col
 
+    def getGrid(self):
+        return self.__grid
+
+    
+    # Setters
+    
+    def setGrid(self, grid):
+        self.__grid = grid
+        
+    def setRow(self, row):
+        self.__row = row
+        
+    def setCol(self, col):
+        self.__col = col
+
+    
+    # Methods
+
     def initGrid(self):
         grid = [[Cell() for col in range(self.__col)]
                 for row in range(self.__row)]
         return grid
 
-    def getGrid(self):
-        return self.__grid
-
-    def setGrid(self, grid):
-        self.__grid = grid
-
-
 class gui():
+    
     def __init__(self, width, height, cellCount):
         self.__width = width
         self.__height = height
@@ -135,26 +159,63 @@ class gui():
 
         self.__root.mainloop()
 
+    
+    # Getters
+    
+    def getWidth(self):
+        return self.__width
+    
+    def getHeight(self):
+        return self.__height
+    
+    def getCellCount(self):
+        return self.__cellCount
+    
+    def getTable(self):
+        return self.__table
+    
+    
+    # Setters
+    
+    def setWidth(self, width):
+        self.__width = width
+        
+    def setHeight(self, height):
+        self.__height = height
+    
+    def setCellCount(self, cellCount):
+        self.__cellCount = cellCount
+    
+    def setTable(self, table):
+        self.__table = table
+        
+        
+    # Methods
+    
     def initTable(self, cellCount):
         return Table(cellCount, cellCount)
 
     def update(self):
         self.drawGrid()
 
-    def highlightCell(self):
-        x = math.floor(self.__mouseX/800/2*10)
-        y = math.floor(self.__mouseY/800/2*10)
+    def highlightCells(self, x, y):
+        
+        neighborPos = self.getTable().checkNeighbors(x, y) # List of x and y of all neighbors
+        
+        for i in neighborPos:
+            
+            val = self.__table.getGrid()[i[1]][i[0]].getHighlight() # Boolean of whether it's highlighted or not
 
-        val = self.__table.getGrid()[y][x].getHighlight()
-
-        if val:
-            self.__table.getGrid()[y][x].setHighlight(False)
-        else:
-            self.__table.getGrid()[y][x].setHighlight(True)
-        print(x, y)
+            if val:
+                self.__table.getGrid()[i[1]][i[0]].setHighlight(False) # If highlight remove it
+            else:
+                self.__table.getGrid()[i[1]][i[0]].setHighlight(True) # If not then add highlight
+            
+        # print(x, y)
         self.update()
 
     def drawGrid(self):
+        
         self.__canvas.delete("all")
 
         tRow = self.__table.getCol()
@@ -181,7 +242,11 @@ class gui():
     def updateClick(self, event):
         self.__mouseX = event.x
         self.__mouseY = event.y
-        self.highlightCell()
+        
+        x = math.floor(self.__mouseX/800/2*10)
+        y = math.floor(self.__mouseY/800/2*10)
+        
+        self.highlightCells(x, y)
 
 
 g = gui(800, 800, 5)
