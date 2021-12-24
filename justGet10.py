@@ -94,9 +94,10 @@ class Table():
 
 
 class gui():
-    def __init__(self, width, height):
+    def __init__(self, width, height, cellCount):
         self.__width = width
         self.__height = height
+        self.__cellCount = cellCount
 
         self.__root = Tk()
         self.__root.title = ("Game")
@@ -117,14 +118,14 @@ class gui():
         self.__lbl1 = Label(self. __frame2, text="Jeux")
         self.__lbl1.pack(padx=10, pady=10)
 
-        self.__table = self.initTable()
+        self.__table = self.initTable(self.__cellCount)
 
         self.update()
 
         self.__root.mainloop()
 
-    def initTable(self):
-        return Table()
+    def initTable(self, cellCount):
+        return Table(cellCount, cellCount)
 
     def update(self):
         self.drawGrid()
@@ -140,7 +141,8 @@ class gui():
             for col in range(tCol):
                 self.__canvas.create_rectangle(
                     col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=self.__table.getGrid()[row][col].getColor(), outline="black")
+                self.__canvas.create_text(
+                    (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=self.__table.getGrid()[row][col].getState(), font=("Purisa", 32))
 
 
-g = gui(800, 800)
-g.drawGrid()
+g = gui(800, 800, 5)
