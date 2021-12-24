@@ -1,6 +1,7 @@
 from random import *
 from tkinter import *
 from time import sleep, time
+import math
 
 
 class Cell():
@@ -40,6 +41,9 @@ class Cell():
 
     def getHighlight(self):
         return self.__highlighted
+
+    def setHighlight(self, val):
+        self.__highlighted = val
 
     def setState(self, n):
         assert n >= 0 and n <= 10
@@ -137,7 +141,22 @@ class gui():
     def update(self):
         self.drawGrid()
 
+    def highlightCell(self):
+        x = math.floor(self.__mouseX/800/2*10)
+        y = math.floor(self.__mouseY/800/2*10)
+
+        val = self.__table.getGrid()[y][x].getHighlight()
+
+        if val:
+            self.__table.getGrid()[y][x].setHighlight(False)
+        else:
+            self.__table.getGrid()[y][x].setHighlight(True)
+        print(x, y)
+        self.update()
+
     def drawGrid(self):
+        self.__canvas.delete("all")
+
         tRow = self.__table.getCol()
         tCol = self.__table.getRow()
 
@@ -160,14 +179,9 @@ class gui():
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", 32))
 
     def updateClick(self, event):
-        '''  x = self.__root.winfo_pointerx()
-         y = self.__root.winfo_pointery()
-         self.__abs_coord_x = self.__root.winfo_pointerx() - self.__root.winfo_rootx()
-         self.__abs_coord_y = self.__root.winfo_pointery() - self.__root.winfo_rooty() '''
         self.__mouseX = event.x
         self.__mouseY = event.y
-
-        print(self.__mouseX, self.__mouseY)
+        self.highlightCell()
 
 
 g = gui(800, 800, 5)
