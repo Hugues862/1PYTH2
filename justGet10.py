@@ -124,6 +124,36 @@ class Table():
         grid = [[Cell() for col in range(self.__col)]
                 for row in range(self.__row)]
         return grid
+    
+    def checkNeighbors(self, x, y, origin = "None"):
+        
+        top, bottom, left, right = None, None, None, None
+        
+        if self.getGrid()[y - 1][x].getState() == self.getGrid()[y][x] and origin != "Top":
+            
+            top = self.checkNeighbors(x, y - 1, "Bottom")
+            
+        if self.getGrid()[y + 1][x].getState() == self.getGrid()[y][x] and origin != "Bottom":
+            
+            bottom = self.checkNeighbors(x, y + 1, "Top")
+            
+        if self.getGrid()[y][x - 1].getState() == self.getGrid()[y][x] and origin != "Left":
+            
+            left = self.checkNeighbors(x - 1, y, "Right")
+            
+        if self.getGrid()[y][x + 1].getState() == self.getGrid()[y][x] and origin != "Right":
+            
+            right = self.checkNeighbors(x + 1, y, "Left")
+            
+        return (x, y), top, bottom, left, right
+    
+    def getNeighborsPos(self, x, y):
+        
+        tab = []
+        
+        # Append every tuple from the method checkNeighbors in tab
+        
+        return tab
 
 class gui():
     
@@ -200,7 +230,7 @@ class gui():
 
     def highlightCells(self, x, y):
         
-        neighborPos = self.getTable().checkNeighbors(x, y) # List of x and y of all neighbors
+        neighborPos = self.getTable().getNeighborsPos(x, y) # List of x and y of all neighbors
         
         for i in neighborPos:
             
@@ -249,4 +279,4 @@ class gui():
         self.highlightCells(x, y)
 
 
-g = gui(800, 800, 5)
+# g = gui(800, 800, 5)
