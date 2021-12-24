@@ -8,15 +8,14 @@ import math
 
 class gui():
 
-    def __init__(self, width, height, cellCount):
+    def __init__(self, width, height):
         self.__width = width
         self.__height = height
-        self.__cellCount = cellCount
 
         self.__root = Tk()
         self.__root.bind('<Button-1>', self.updateClick)
 
-        self.__root.title = ("Game")
+        self.__root.title = ("Just Get Ten")
 
         # FRAME1
         self.__frame1 = Frame(self.__root)
@@ -31,11 +30,21 @@ class gui():
         self.__frame2 = Frame(self.__root)
         self.__frame2.grid(row=0, column=1, padx=self.__width/10)
 
-        self.__lbl1 = Label(self. __frame2, text="Jeux")
-        self.__lbl1.pack(padx=10, pady=10)
+        self.__items = []
+        self.__items.append(Label(self. __frame2, text="Just Get Ten"))
 
-        self.__table = self.initTable(self.__cellCount)
+        self.__items.append(Scale(self.__frame2, orient='horizontal',
+                                  from_=3, to=50, resolution=1, label="Cells", length=200))
+        self.__items[1].set(10)
 
+        self.__items.append(Button(
+            self.__frame2, text="New Grid", command=self.newTable))
+
+        for item in self.__items:
+            item.pack(padx=10, pady=10)
+
+        self.__table = self.initTable()
+        self.__cellCount = self.__items[1].get()
         self.update()
 
         self.__root.mainloop()
@@ -70,34 +79,65 @@ class gui():
 
     # Methods
 
-    def initTable(self, cellCount):
-        return Table(cellCount, cellCount)
+    def initTable(self):
+        self.__cellCount = self.__items[1].get()
+        return Table(self.__cellCount, self.__cellCount)
+
+    def newTable(self):
+        self.__table = self.initTable()
+        self.update()
 
     def update(self):
+        self.__table.gravity()
+        self.__table.displayTable()
         self.drawGrid()
 
-    def highlightCells(self, x, y):
+    def updateClick(self, event):
+        self.__mouseX = event.x
+        self.__mouseY = event.y
 
+        x = math.floor(((self.__mouseX - 0) / (self.__width - 0)) *
+                       (self.__table.getCol() - 0) + 0)
+        y = math.floor(((self.__mouseY - 0) / (self.__height - 0)) *
+                       (self.__table.getRow() - 0) + 0)
+
+        if event.x_root < self.__width:
+            self.highlightCells(x, y)
+
+    def highlightCells(self, x, y):
         neighborPos = self.getTable().getNeighborsPos(
             x, y)  # List of x and y of all neighbors
-
-        for i in neighborPos:
-
+        if len(neighborPos) > 1:
             # Boolean of whether it's highlighted or not
-            val = self.__table.getGrid()[i[1]][i[0]].getHighlight()
+            val = self.__table.getGrid()[neighborPos[0]
+                                         [1]][neighborPos[0][0]].getHighlight()
 
             if val:
-                self.__table.getGrid()[i[1]][i[0]].setHighlight(
-                    False)  # If highlight remove it
-            else:
-                self.__table.getGrid()[i[1]][i[0]].setHighlight(
-                    True)  # If not then add highlight
+                self.removeCells(neighborPos[1:])
+                self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
+                    False)
+                self.addUp(neighborPos[0])
 
-        # print(x, y)
+            for item in neighborPos:
+                if val == False:
+                    self.__table.getGrid()[item[1]][item[0]].setHighlight(
+                        True)  # If not then add highlight
+            del neighborPos
+
         self.update()
+
+    def removeCells(self, items):
+        for item in items:
+            self.__table.getGrid()[item[1]][item[0]].setState(0)
+
+    def addUp(self, item):
+        val = self.__table.getGrid()[item[1]][item[0]].getState()
+        self.__table.getGrid()[item[1]][item[0]].setState(val+1)
+        self.__table.getGrid()[item[1]][item[0]].changeColor()
 
     def drawGrid(self):
 
+        coef = ((self.__table.getCol()/100)+1)*1
         self.__canvas.delete("all")
 
         tRow = self.__table.getCol()
@@ -114,21 +154,13 @@ class gui():
 
                 if highlighted:
                     self.__canvas.create_rectangle(
-                        col*sizeW+10, row*sizeH+10, col*sizeW+sizeW-10, row*sizeH+sizeH-10, fill=color, outline="black")
+                        col*sizeW+(10/coef), row*sizeH+(10/coef), col*sizeW+sizeW-(10/coef), row*sizeH+sizeH-(10/coef), fill="black", outline="black")
                 else:
                     self.__canvas.create_rectangle(
                         col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=color, outline="black")
+
                 self.__canvas.create_text(
-                    (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", 32))
-
-    def updateClick(self, event):
-        self.__mouseX = event.x
-        self.__mouseY = event.y
-
-        x = math.floor(self.__mouseX/800/2*10)
-        y = math.floor(self.__mouseY/800/2*10)
-
-        self.highlightCells(x, y)
+                    (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)))
 
 
-g = gui(800, 800, 5)
+g = gui(800, 800)

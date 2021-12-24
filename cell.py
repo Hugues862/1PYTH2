@@ -51,8 +51,9 @@ class Cell():
         self.__highlighted = val
 
     def setState(self, n):
-        assert n >= 0 and n <= 10
         self.__state = n
+        self.__highlighted = False
+        self.changeColor()
 
     def setColor(self, color):
         self.__color = color
