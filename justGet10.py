@@ -2,20 +2,20 @@ from random import *
 from tkinter import *
 
 
-class cell():
+class Cell():
 
     def __init__(self):
         self.__colorDict = {
-            1: "31CD32",
-            2: "4068E1",
-            3: "FF8C00",
-            4: "FF0000",
-            5: "8FBC8E",
-            6: "FF00FF",
-            7: "9400D3",
-            8: "5B00F7",
-            9: "32008F",
-            0: "000000"
+            1: "#31CD32",
+            2: "#4068E1",
+            3: "#FF8C00",
+            4: "#FF0000",
+            5: "#8FBC8E",
+            6: "#FF00FF",
+            7: "#9400D3",
+            8: "#5B00F7",
+            9: "#32008F",
+            0: "#000000"
         }
 
         self.__state = 0
@@ -23,6 +23,9 @@ class cell():
 
         self.randomState()
         self.changeColor()
+
+    def getInfo(self):
+        return self.__state, self. __color
 
     def getColorDict(self):
         return self.__colorDict
@@ -41,7 +44,6 @@ class cell():
         self.__color = color
 
     def randomState(self):
-
         rdm = random()
 
         if rdm <= 0.4:
@@ -61,16 +63,28 @@ class cell():
             return
 
     def changeColor(self):
-        state = self.getState()
-        self.setColor(self.getColorDict()[state])
+        self.setColor(self.__colorDict[self.__state])
         return
 
 
-class table():
+class Table():
 
-    def __init__(self, x, y) -> None:
+    def __init__(self, row=5, col=5):
+        self.__row = row
+        self.__col = col
 
-        self.__grid = [[cell() for j in range(x)] for i in range(y)]
+        self.__grid = self.initGrid()
+
+    def getRow(self):
+        return self.__row
+
+    def getCol(self):
+        return self.__col
+
+    def initGrid(self):
+        grid = [[Cell() for col in range(self.__col)]
+                for row in range(self.__row)]
+        return grid
 
     def getGrid(self):
         return self.__grid
@@ -78,41 +92,55 @@ class table():
     def setGrid(self, grid):
         self.__grid = grid
 
-    def run(self, rows, cols, width, height):
 
-        self.__xOrigin = width / 2
-        self.__yOrigin = height / 2
-
-        if rows == cols:
-            self.caseSize = height / rows
-            self.__yOrigin = 0
-            self.__xOrigin = 0
-
-        elif rows > cols:
-            self.caseSize = height / rows
-            self.__yOrigin = 0
-            self.__xOrigin -= self.caseSize * (cols / 2)
-
-        else:
-            self.caseSize = width / cols
-            self.__xOrigin = 0
-            self.__yOrigin -= self.caseSize * (rows / 2)
+class gui():
+    def __init__(self, width, height):
+        self.__width = width
+        self.__height = height
 
         self.__root = Tk()
+        self.__root.title = ("Game")
 
-        self.__leftFrame = Frame(self.__root, padx=50, pady=50)
-        self.__leftFrame.grid(row=0, column=0)
+        # FRAME1
+        self.__frame1 = Frame(self.__root)
+        self.__frame1.grid(row=0, column=0)
 
-        self.__canvas = Canvas(self.__leftFrame, width=width, height=height)
+        self.__canvas = Canvas(self.__frame1)
+        self.__canvas.config(width=width, height=height,
+                             highlightthickness=0, bd=0, bg="black")
         self.__canvas.pack()
 
-    def drawCanvas(self):
+        # FRAME2
+        self.__frame2 = Frame(self.__root)
+        self.__frame2.grid(row=0, column=1, padx=self.__width/10)
 
-        for rows in range(len(self.__grid)):
+        self.__lbl1 = Label(self. __frame2, text="Jeux")
+        self.__lbl1.pack(padx=10, pady=10)
 
-            for cols in range(len(self.__grid[rows])):
+        self.__table = self.initTable()
 
-                self.__canvas.create_rectangle(self.__xOrigin + self.caseSize * cols, self.__yOrigin + self.caseSize * rows, self.__xOrigin +
-                                               self.caseSize * (cols + 1), self.__yOrigin + self.caseSize * (rows + 1), fill=self.__grid[rows][cols].getColor())
-                self.__canvas.create_text(self.__xOrigin + self.caseSize * cols, self.__yOrigin +
-                                          self.caseSize * rows, text=str(self.__grid[rows][cols].getState()))
+        self.update()
+
+        self.__root.mainloop()
+
+    def initTable(self):
+        return Table()
+
+    def update(self):
+        self.drawGrid()
+
+    def drawGrid(self):
+        tRow = self.__table.getCol()
+        tCol = self.__table.getRow()
+
+        sizeW = self.__width/tRow
+        sizeH = self.__height/tCol
+
+        for row in range(tRow):
+            for col in range(tCol):
+                self.__canvas.create_rectangle(
+                    col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=self.__table.getGrid()[row][col].getColor(), outline="black")
+
+
+g = gui(800, 800)
+g.drawGrid()
