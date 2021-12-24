@@ -1,5 +1,6 @@
 from random import *
 from tkinter import *
+from time import sleep, time
 
 
 class Cell():
@@ -20,6 +21,7 @@ class Cell():
 
         self.__state = 0
         self.__color = ""
+        self.__highlighted = False
 
         self.randomState()
         self.changeColor()
@@ -35,6 +37,9 @@ class Cell():
 
     def getColor(self):
         return self.__color
+
+    def getHighlight(self):
+        return self.__highlighted
 
     def setState(self, n):
         assert n >= 0 and n <= 10
@@ -100,6 +105,8 @@ class gui():
         self.__cellCount = cellCount
 
         self.__root = Tk()
+        self.__root.bind('<Button-1>', self.updateClick)
+
         self.__root.title = ("Game")
 
         # FRAME1
@@ -139,10 +146,28 @@ class gui():
 
         for row in range(tRow):
             for col in range(tCol):
-                self.__canvas.create_rectangle(
-                    col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=self.__table.getGrid()[row][col].getColor(), outline="black")
+                color = self.__table.getGrid()[row][col].getColor()
+                text = self.__table.getGrid()[row][col].getState()
+                highlighted = self.__table.getGrid()[row][col].getHighlight()
+
+                if highlighted:
+                    self.__canvas.create_rectangle(
+                        col*sizeW+10, row*sizeH+10, col*sizeW+sizeW-10, row*sizeH+sizeH-10, fill=color, outline="black")
+                else:
+                    self.__canvas.create_rectangle(
+                        col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=color, outline="black")
                 self.__canvas.create_text(
-                    (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=self.__table.getGrid()[row][col].getState(), font=("Purisa", 32))
+                    (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", 32))
+
+    def updateClick(self, event):
+        '''  x = self.__root.winfo_pointerx()
+         y = self.__root.winfo_pointery()
+         self.__abs_coord_x = self.__root.winfo_pointerx() - self.__root.winfo_rootx()
+         self.__abs_coord_y = self.__root.winfo_pointery() - self.__root.winfo_rooty() '''
+        self.__mouseX = event.x
+        self.__mouseY = event.y
+
+        print(self.__mouseX, self.__mouseY)
 
 
 g = gui(800, 800, 5)
