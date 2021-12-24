@@ -1,4 +1,5 @@
 from table import *
+from score import *
 
 from random import *
 from tkinter import *
@@ -31,25 +32,52 @@ class gui():
         self.__frame2.grid(row=0, column=1, padx=self.__width/10)
 
         self.__items = []
-        self.__items.append(Label(self. __frame2, text="Just Get Ten"))
+        self.__items.append(
+            Label(self.__frame2, text="Just Get Ten", font=("Courier", 44)))
+
+        self.__items.append(
+            Label(self.__frame2, text="High Score : ", font=("Courier", 44)))
+
+        self.__items.append(
+            Label(self.__frame2, text="Score : ", font=("Courier", 34)))
+
+        self.__items.append(
+            Label(self.__frame2, text="Max : ", font=("Courier", 34)))
 
         self.__items.append(Scale(self.__frame2, orient='horizontal',
-                                  from_=3, to=50, resolution=1, label="Cells", length=200))
-        self.__items[1].set(10)
+                                  from_=3, to=50, resolution=1, label="Cells", length=200, font=("Courier", 24)))
+        self.__items[4].set(5)
 
         self.__items.append(Button(
-            self.__frame2, text="New Grid", command=self.newTable))
+            self.__frame2, text="New Grid", command=self.newTable, font=("Courier", 24)))
 
         for item in self.__items:
-            item.pack(padx=10, pady=10)
+            item.pack(padx=0, pady=10)
 
         self.__table = self.initTable()
-        self.__cellCount = self.__items[1].get()
+        self.__cellCount = self.__items[4].get()
         self.update()
 
         self.__root.mainloop()
 
     # Getters
+    def getScore(self):
+        val = 0
+        for y in range(self.getTable().getRow()):
+            for x in range(self.getTable().getCol()):
+                val += self.__table.getGrid()[y][x].getState()
+
+        self.__score = val
+        return str(val)
+
+    def getMax(self):
+        val = 0
+        for y in range(self.__table.getRow()):
+            for x in range(self.__table.getCol()):
+                if self.__table.getGrid()[y][x].getState() > val:
+                    val = self.__table.getGrid()[y][x].getState()
+        self.__max = val
+        return str(val)
 
     def getWidth(self):
         return self.__width
@@ -80,7 +108,7 @@ class gui():
     # Methods
 
     def initTable(self):
-        self.__cellCount = self.__items[1].get()
+        self.__cellCount = self.__items[4].get()
         return Table(self.__cellCount, self.__cellCount)
 
     def newTable(self):
@@ -91,6 +119,12 @@ class gui():
         self.__table.gravity()
         self.__table.displayTable()
         self.drawGrid()
+        self.updateLabels()
+
+    def updateLabels(self):
+        self.__items[1].config(text="High Score : "+getHighScore())
+        self.__items[2].config(text="Score : "+self.getScore())
+        self.__items[3].config(text="Max : "+self.getMax())
 
     def updateClick(self, event):
         self.__mouseX = event.x
