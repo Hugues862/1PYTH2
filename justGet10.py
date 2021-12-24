@@ -23,6 +23,7 @@ class Cell():
         self.__state = 0
         self.__color = ""
         self.__highlighted = False
+        self.__checked = False
 
         self.randomState()
         self.changeColor()
@@ -45,6 +46,9 @@ class Cell():
     def getHighlight(self):
         return self.__highlighted
 
+    def getChecked(self):
+        return self.__checked
+    
     
     # Setters
     
@@ -58,6 +62,9 @@ class Cell():
     def setColor(self, color):
         self.__color = color
 
+    def setChecked(self, state):
+        self.__checked = state
+        
     
     # Methods
     
@@ -125,35 +132,49 @@ class Table():
                 for row in range(self.__row)]
         return grid
     
-    def checkNeighbors(self, x, y, origin = "None"):
+    def checkNeighbors(self, x, y):
         
-        top, bottom, left, right = None, None, None, None
+        tab = [(x, y)]
         
-        if self.getGrid()[y - 1][x].getState() == self.getGrid()[y][x] and origin != "Top":
+        self.getGrid()[y][x].setChecked(True)
+        
+        top, bottom, left, right = [], [], [], []
+        
+        if y != 0 and self.getGrid()[y - 1][x].getState() == self.getGrid()[y][x].getState() and self.getGrid()[y - 1][x].getChecked() == False:
             
-            top = self.checkNeighbors(x, y - 1, "Bottom")
+            top = self.checkNeighbors(x, y - 1)
             
-        if self.getGrid()[y + 1][x].getState() == self.getGrid()[y][x] and origin != "Bottom":
+        if y != self.getRow() - 1 and self.getGrid()[y + 1][x].getState() == self.getGrid()[y][x].getState() and self.getGrid()[y + 1][x].getChecked() == False:
             
-            bottom = self.checkNeighbors(x, y + 1, "Top")
+            bottom = self.checkNeighbors(x, y + 1)
             
-        if self.getGrid()[y][x - 1].getState() == self.getGrid()[y][x] and origin != "Left":
+        if x != 0 and self.getGrid()[y][x - 1].getState() == self.getGrid()[y][x].getState() and self.getGrid()[y][x - 1].getChecked() == False:
             
-            left = self.checkNeighbors(x - 1, y, "Right")
+            left = self.checkNeighbors(x - 1, y)
             
-        if self.getGrid()[y][x + 1].getState() == self.getGrid()[y][x] and origin != "Right":
+        if x != self.getCol() - 1 and self.getGrid()[y][x + 1].getState() == self.getGrid()[y][x].getState() and self.getGrid()[y][x + 1].getChecked() == False:
             
-            right = self.checkNeighbors(x + 1, y, "Left")
-            
-        return (x, y), top, bottom, left, right
+            right = self.checkNeighbors(x + 1, y)
+        
+        # self.getGrid()[y][x].setChecked(False) Makes the Highlight bug
+
+        for i in top:
+            tab.append(i)
+        for i in bottom:
+            tab.append(i)
+        for i in left:
+            tab.append(i)
+        for i in right:
+            tab.append(i)
+        
+        return tab
     
     def getNeighborsPos(self, x, y):
         
-        tab = []
+        positions = self.checkNeighbors(x, y)
+        print(sorted(positions))
         
-        # Append every tuple from the method checkNeighbors in tab
-        
-        return tab
+        return positions
 
 class gui():
     
@@ -279,4 +300,4 @@ class gui():
         self.highlightCells(x, y)
 
 
-# g = gui(800, 800, 5)
+g = gui(800, 800, 5)
