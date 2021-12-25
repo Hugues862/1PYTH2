@@ -10,7 +10,7 @@ from threading import *
 
 class Game():
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, timer):
         self.__width = width
         self.__height = height
 
@@ -66,8 +66,11 @@ class Game():
         self.__table = self.initTable()
         self.__cellCount = self.__items[4].get()
         self.__timer = None
+        self.__defaultTime = timer
 
-        self.__timerThread = Thread(target=self.countdown)
+        self.__stopThread = False
+        self.__timerThread = Thread(
+            target=self.countdown, args=(self.__defaultTime,))
         self.__timerThread.start()
 
         self.update()
@@ -127,6 +130,7 @@ class Game():
 
     def newTable(self):
         self.__table = self.initTable()
+
         self.update()
 
     def update(self):
@@ -145,8 +149,7 @@ class Game():
 
         self.__items[7].config(text=self.__timer)
 
-    def countdown(self):
-        t = 5
+    def countdown(self, t):
         if self.__timer == None:
             while t:
                 t -= 1
@@ -155,6 +158,9 @@ class Game():
                 print(self.__timer, end="\r")
                 sleep(1)
                 self.updateLabels()
+                if self.__stopThread == True:
+                    self.__stopThread = False
+                    break
 
     def updateClick(self, event):
         self.__mouseX = event.x
@@ -227,4 +233,4 @@ class Game():
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)))
 
 
-g = Game(800, 800)
+g = Game(800, 800, 10)
