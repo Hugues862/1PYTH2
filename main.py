@@ -8,7 +8,7 @@ import math
 from threading import *
 
 
-class gui():
+class Game():
 
     def __init__(self, width, height):
         self.__width = width
@@ -130,10 +130,13 @@ class gui():
         self.update()
 
     def update(self):
-        self.__table.gravity()
-        self.__table.displayTable()
-        self.drawGrid()
-        self.updateLabels()
+        if self.__timer == "00:00":
+            self.__root.destroy()
+        else:
+            self.__table.gravity()
+            self.__table.displayTable()
+            self.drawGrid()
+            self.updateLabels()
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : "+getHighScore())
@@ -143,7 +146,7 @@ class gui():
         self.__items[7].config(text=self.__timer)
 
     def countdown(self):
-        t = 60
+        t = 5
         if self.__timer == None:
             while t:
                 t -= 1
@@ -224,4 +227,4 @@ class gui():
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)))
 
 
-g = gui(800, 800)
+g = Game(800, 800)
