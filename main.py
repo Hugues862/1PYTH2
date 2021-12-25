@@ -233,4 +233,4 @@ class Game():
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)))
 
 
-g = Game(800, 800, 10)
+g = Game(800, 800, 200)
