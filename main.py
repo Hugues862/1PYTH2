@@ -5,6 +5,7 @@ from random import *
 from tkinter import *
 from time import sleep, time
 import math
+from threading import *
 
 
 class gui():
@@ -14,6 +15,7 @@ class gui():
         self.__height = height
 
         self.__root = Tk()
+        self.__root.configure(background='black')
         self.__root.bind('<Button-1>', self.updateClick)
 
         self.__root.title = ("Just Get Ten")
@@ -29,33 +31,45 @@ class gui():
 
         # FRAME2
         self.__frame2 = Frame(self.__root)
-        self.__frame2.grid(row=0, column=1, padx=self.__width/10)
+        self.__frame2.grid(
+            row=0, column=1, padx=self.__width/10)
+        self.__frame2.config(bg="black")
 
         self.__items = []
         self.__items.append(
-            Label(self.__frame2, text="Just Get Ten", font=("Courier", 44)))
+            Label(self.__frame2, text="Just Get Ten", font=("Courier", 44), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="High Score : ", font=("Courier", 44)))
+            Label(self.__frame2, text="High Score : ", font=("Courier", 44), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="Score : ", font=("Courier", 34)))
+            Label(self.__frame2, text="Score : ", font=("Courier", 34), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="Max : ", font=("Courier", 34)))
+            Label(self.__frame2, text="Max : ", font=("Courier", 34), bg="black"))
 
         self.__items.append(Scale(self.__frame2, orient='horizontal',
-                                  from_=3, to=50, resolution=1, label="Cells", length=200, font=("Courier", 24)))
+                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", 24), bg="black"))
         self.__items[4].set(5)
 
         self.__items.append(Button(
             self.__frame2, text="New Grid", command=self.newTable, font=("Courier", 24)))
+
+        self.__items.append(
+            Label(self.__frame2, text="Time Left", font=("Courier", 40), bg="black"))
+        self.__items.append(
+            Label(self.__frame2, text="00:00", font=("Courier", 40), bg="black"))
 
         for item in self.__items:
             item.pack(padx=0, pady=10)
 
         self.__table = self.initTable()
         self.__cellCount = self.__items[4].get()
+        self.__timer = None
+
+        self.__timerThread = Thread(target=self.countdown)
+        self.__timerThread.start()
+
         self.update()
 
         self.__root.mainloop()
@@ -63,12 +77,12 @@ class gui():
     # Getters
     def getScore(self):
         val = 0
-        for y in range(self.getTable().getRow()):
-            for x in range(self.getTable().getCol()):
+        for y in range(self.__cellCount):
+            for x in range(self.__cellCount):
                 val += self.__table.getGrid()[y][x].getState()
 
         self.__score = val
-        return str(val)
+        return str(self.__score)
 
     def getMax(self):
         val = 0
@@ -125,6 +139,19 @@ class gui():
         self.__items[1].config(text="High Score : "+getHighScore())
         self.__items[2].config(text="Score : "+self.getScore())
         self.__items[3].config(text="Max : "+self.getMax())
+
+        self.__items[7].config(text=self.__timer)
+
+    def countdown(self):
+        t = 60
+        if self.__timer == None:
+            while t:
+                t -= 1
+                mins, secs = divmod(t, 60)
+                self.__timer = '{:02d}:{:02d}'.format(mins, secs)
+                print(self.__timer, end="\r")
+                sleep(1)
+                self.updateLabels()
 
     def updateClick(self, event):
         self.__mouseX = event.x
