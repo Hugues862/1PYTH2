@@ -137,7 +137,7 @@ class Table():
 
         down()
     
-    def addState(self, x, y):
+    def addState(self, x, y): # Adds 1 to state in pos X Y in the grid
         
         self.__grid[y][x].setState(self.__grid[y][x].getState() + 1)
         
