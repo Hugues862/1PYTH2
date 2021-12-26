@@ -3,7 +3,7 @@ from random import *
 
 class Cell():
 
-    def __init__(self):
+    def __init__(self, level):
         self.__colorDict = {
             1: "#31CD32",
             2: "#4068E1",
@@ -16,14 +16,31 @@ class Cell():
             9: "#32008F",
             0: "#000000"
         }
+        self.__diff = {
+            1: {
+                0: 0,
+                1: 0.4,
+                2: 0.7,
+                3: 0.95,
+                4: 1
+            },
+            2: {
+                0: 0,
+                1: 0.1,
+                2: 0.3,
+                3: 0.6,
+                4: 1
+            }
+        }
         # State of cell
         self.__state = 0
         # color of cell
         self.__color = ""
         self.__highlighted = False
         self.__checked = False
+        self.__level = level
 
-        self.randomState()
+        self.randomState(self.__level)
         self.changeColor()
 
     # Getters
@@ -64,28 +81,16 @@ class Cell():
 
     # Methods
 
-    def randomState(self):
+    def randomState(self, diff):
         '''Selects a random state for the cell
 
         Uses probabilities.
         '''
         rdm = random()
 
-        if rdm <= 0.4:
-            self.setState(1)
-            return
-
-        if rdm <= 0.7:
-            self.setState(2)
-            return
-
-        if rdm <= 0.95:
-            self.setState(3)
-            return
-
-        if rdm <= 1:
-            self.setState(4)
-            return
+        for i in range(1, len(self.__diff[diff])):
+            if self.__diff[diff][i-1] <= rdm <= self.__diff[diff][i]:
+                self.setState(i)
 
     def changeColor(self):
         self.setColor(self.__colorDict[self.__state])
