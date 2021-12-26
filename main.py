@@ -142,6 +142,7 @@ class Game():
 
     def newTable(self):
         self.__table = self.initTable()
+        self.updateHighscore()
         self.setScore(0)
         self.update()
 
@@ -254,9 +255,12 @@ class Game():
                 self.__canvas.create_text(
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)), fill="white")
 
-    def destroy(self):
+    def updateHighscore(self):
         if self.getScore() > int(score.getHighScore()):
             score.setScore(self.getScore())
+        
+    def destroy(self):
+        self.updateHighscore()
         self.__root.destroy()
         exit()
 
