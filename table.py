@@ -78,20 +78,23 @@ class Table():
         self.getGrid()[y][x].setChecked(False)  # Makes the Highlight bug
 
         for i in top:
-            tab.append(i)
+            if i not in tab:
+                tab.append(i)
         for i in bottom:
-            tab.append(i)
+            if i not in tab:
+                tab.append(i)
         for i in left:
-            tab.append(i)
+            if i not in tab:
+                tab.append(i)
         for i in right:
-            tab.append(i)
+            if i not in tab:
+                tab.append(i)
 
         return tab
 
     def getNeighborsPos(self, x, y):
 
         positions = self.checkNeighbors(x, y)
-
         return positions
 
     def displayTable(self):
