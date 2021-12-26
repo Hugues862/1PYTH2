@@ -143,7 +143,7 @@ class Game():
 
     def newTable(self):
         self.__table = self.initTable()
-
+        self.setScore(0)
         self.update()
 
     def update(self):
