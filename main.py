@@ -13,7 +13,8 @@ class Game():
     def __init__(self, width, height, timer):
         self.__width = width
         self.__height = height
-        
+
+        self.__fontMult = 0.7
         self.__win = False
 
         self.__root = Tk()
@@ -39,31 +40,31 @@ class Game():
 
         self.__items = []
         self.__items.append(
-            Label(self.__frame2, text="Just Get Ten", font=("Courier", 44), bg="black"))
+            Label(self.__frame2, text="Just Get Ten", font=("Courier", int(44*self.__fontMult)), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="High Score : ", font=("Courier", 44), bg="black"))
+            Label(self.__frame2, text="High Score : ", font=("Courier", int(44*self.__fontMult)), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="Score : ", font=("Courier", 34), bg="black"))
+            Label(self.__frame2, text="Score : ", font=("Courier", int(34*self.__fontMult)), bg="black"))
 
         self.__items.append(
-            Label(self.__frame2, text="Max : ", font=("Courier", 34), bg="black"))
+            Label(self.__frame2, text="Max : ", font=("Courier", int(34*self.__fontMult)), bg="black"))
 
         self.__items.append(Scale(self.__frame2, orient='horizontal',
-                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", 24), bg="black"))
+                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", int(24*self.__fontMult)), bg="black"))
         self.__items[4].set(5)
 
         self.__items.append(Button(
-            self.__frame2, text="New Grid", command=self.newTable, font=("Courier", 24)))
+            self.__frame2, text="New Grid", command=self.newTable, font=("Courier", int(24*self.__fontMult))))
 
         self.__items.append(
-            Label(self.__frame2, text="Time Left", font=("Courier", 40), bg="black"))
+            Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult)), bg="black"))
         self.__items.append(
-            Label(self.__frame2, text="00:00", font=("Courier", 40), bg="black"))
+            Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult)), bg="black"))
 
         for item in self.__items:
-            item.pack(padx=0, pady=10)
+            item.pack(padx=0, pady=5)
 
         self.__table = self.initTable()
         self.__cellCount = self.__items[4].get()
@@ -80,10 +81,10 @@ class Game():
         self.__root.mainloop()
 
     # Getters
-    
+
     def getWin(self):
         return self.__win
-    
+
     def getScore(self):
         val = 0
         for y in range(self.__cellCount):
@@ -145,20 +146,18 @@ class Game():
     def update(self):
         if self.__timer == "00:00":
             self.__root.destroy()
-            
+
         else:
             self.__table.gravity()
             self.__table.displayTable()
             self.drawGrid()
             self.updateLabels()
-            
+
             self.setWin(self.__table.win())
-            
+
             if self.getWin() == True:
-                
+
                 self.__root.destroy()
-            
-            
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : "+getHighScore())
