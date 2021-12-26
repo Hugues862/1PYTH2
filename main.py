@@ -84,7 +84,7 @@ class Game():
     # Getters
 
     def escapeKey(self, event=None):
-        exit()
+        self.__root.destroy()
         return "break"
 
     def getWin(self):
