@@ -255,8 +255,8 @@ class Game():
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)), fill="white")
 
     def destroy(self):
-        if self.getScore() > int(getHighScore()):
-            setScore(self.getScore())
+        if self.getScore() > int(score.getHighScore()):
+            score.setScore(self.getScore())
         self.__root.destroy()
         
     def addScore(self, score):
