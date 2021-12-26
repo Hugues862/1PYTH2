@@ -18,7 +18,7 @@ class Game():
         self.__win = False
 
         self.__root = Tk()
-        self.__root.configure(background='black')
+        self.__root.configure(background='white')
         self.__root.bind('<Button-1>', self.updateClick)
 
         self.__root.title = ("Just Get Ten")
@@ -29,7 +29,7 @@ class Game():
 
         self.__canvas = Canvas(self.__frame1)
         self.__canvas.config(width=width, height=height,
-                             highlightthickness=0, bd=0)
+                             highlightthickness=0, bd=0, bg="black")
         self.__canvas.pack()
 
         # FRAME2
