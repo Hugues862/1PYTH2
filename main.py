@@ -36,7 +36,6 @@ class Game():
         self.__frame2 = Frame(self.__root)
         self.__frame2.grid(
             row=0, column=1, padx=self.__width/10)
-        self.__frame2.config(bg="black")
 
         self.__items = []
         self.__items.append(
