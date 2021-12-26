@@ -136,3 +136,13 @@ class Table():
                 down()
 
         down()
+        
+    def win(self):
+        
+        for i in self.__grid:
+            
+            for j in i:
+                
+                if j.getState() == 10:
+                    return True                
+        return False

@@ -13,6 +13,8 @@ class Game():
     def __init__(self, width, height, timer):
         self.__width = width
         self.__height = height
+        
+        self.__win = False
 
         self.__root = Tk()
         self.__root.configure(background='black')
@@ -78,6 +80,10 @@ class Game():
         self.__root.mainloop()
 
     # Getters
+    
+    def getWin(self):
+        return self.__win
+    
     def getScore(self):
         val = 0
         for y in range(self.__cellCount):
@@ -110,6 +116,9 @@ class Game():
 
     # Setters
 
+    def setWin(self, win):
+        self.__win = win
+
     def setWidth(self, width):
         self.__width = width
 
@@ -136,11 +145,20 @@ class Game():
     def update(self):
         if self.__timer == "00:00":
             self.__root.destroy()
+            
         else:
             self.__table.gravity()
             self.__table.displayTable()
             self.drawGrid()
             self.updateLabels()
+            
+            self.setWin(self.__table.win())
+            
+            if self.getWin() == True:
+                
+                self.__root.destroy()
+            
+            
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : "+getHighScore())
