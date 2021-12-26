@@ -29,7 +29,7 @@ class Game():
 
         self.__canvas = Canvas(self.__frame1)
         self.__canvas.config(width=width, height=height,
-                             highlightthickness=0, bd=0, bg="black")
+                             highlightthickness=0, bd=0)
         self.__canvas.pack()
 
         # FRAME2
@@ -40,28 +40,28 @@ class Game():
 
         self.__items = []
         self.__items.append(
-            Label(self.__frame2, text="Just Get Ten", font=("Courier", int(44*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="Just Get Ten", font=("Courier", int(44*self.__fontMult))))
 
         self.__items.append(
-            Label(self.__frame2, text="High Score : ", font=("Courier", int(44*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="High Score : ", font=("Courier", int(44*self.__fontMult))))
 
         self.__items.append(
-            Label(self.__frame2, text="Score : ", font=("Courier", int(34*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="Score : ", font=("Courier", int(34*self.__fontMult))))
 
         self.__items.append(
-            Label(self.__frame2, text="Max : ", font=("Courier", int(34*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="Max : ", font=("Courier", int(34*self.__fontMult))))
 
         self.__items.append(Scale(self.__frame2, orient='horizontal',
-                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", int(24*self.__fontMult)), bg="black"))
+                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", int(24*self.__fontMult))))
         self.__items[4].set(5)
 
         self.__items.append(Button(
             self.__frame2, text="New Grid", command=self.newTable, font=("Courier", int(24*self.__fontMult))))
 
         self.__items.append(
-            Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult))))
         self.__items.append(
-            Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult)), bg="black"))
+            Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult))))
 
         for item in self.__items:
             item.pack(padx=0, pady=5)
