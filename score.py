@@ -1,5 +1,5 @@
 def getHighScore():
-    with open("score.txt", 'r') as file:
+    with open("./1PYTH2/score.py", 'r') as file:
         lines = file.readlines()
         return lines[0]
 
