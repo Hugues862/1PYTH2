@@ -16,6 +16,7 @@ class Game():
 
         self.__fontMult = 0.7
         self.__win = False
+        self.__score = 0
 
         self.__root = Tk()
         self.__root.configure(background='white')
@@ -91,13 +92,7 @@ class Game():
         return self.__win
 
     def getScore(self):
-        val = 0
-        for y in range(self.__cellCount):
-            for x in range(self.__cellCount):
-                val += self.__table.getGrid()[y][x].getState()
-
-        self.__score = val
-        return str(self.__score)
+        return self.__score
 
     def getMax(self):
         val = 0
@@ -124,6 +119,9 @@ class Game():
 
     def setWin(self, win):
         self.__win = win
+        
+    def setScore(self, score):
+        self.__score = score
 
     def setWidth(self, width):
         self.__width = width
@@ -166,7 +164,7 @@ class Game():
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : " + getHighScore())
-        self.__items[2].config(text="Score : "+ self.getScore())
+        self.__items[2].config(text="Score : "+ str(self.getScore()))
         self.__items[3].config(text="Max : "+ self.getMax())
 
         self.__items[7].config(text=self.__timer)
@@ -201,10 +199,13 @@ class Game():
             x, y)  # List of x and y of all neighbors
         if len(neighborPos) > 1:
             # Boolean of whether it's highlighted or not
-            val = self.__table.getGrid()[neighborPos[0]
+            val = self.getTable().getGrid()[neighborPos[0]
                                          [1]][neighborPos[0][0]].getHighlight()
 
             if val:
+                
+                self.addScore(len(neighborPos) * self.getTable().getGrid()[y][x].getState())
+                
                 self.removeCells(neighborPos[1:])
                 self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
                     False)
@@ -258,5 +259,8 @@ class Game():
         if self.getScore() > int(getHighScore()):
             setScore(self.getScore())
         self.__root.destroy()
+        
+    def addScore(self, score):
+        self.setScore(self.getScore() + score)
         
 g = Game(800, 800, 10000)
