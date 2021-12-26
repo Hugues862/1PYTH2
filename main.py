@@ -150,7 +150,7 @@ class Game():
 
     def update(self):
         if self.__timer == "00:00":
-            self.__root.destroy()
+            self.destroy()
 
         else:
             self.__table.gravity()
@@ -162,12 +162,12 @@ class Game():
 
             if self.getWin() == True:
 
-                self.__root.destroy()
+                self.destroy()
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : " + getHighScore())
-        self.__items[2].config(text="Score : "+self.getScore())
-        self.__items[3].config(text="Max : "+self.getMax())
+        self.__items[2].config(text="Score : "+ self.getScore())
+        self.__items[3].config(text="Max : "+ self.getMax())
 
         self.__items[7].config(text=self.__timer)
 
@@ -254,5 +254,9 @@ class Game():
                 self.__canvas.create_text(
                     (col*sizeW)+sizeW*0.5, (row*sizeH)+sizeW*0.5, text=text, font=("Purisa", int(38/coef)), fill="white")
 
-
-g = Game(800, 800, 200)
+    def destroy(self):
+        if self.getScore() > int(getHighScore()):
+            setScore(self.getScore())
+        self.__root.destroy()
+        
+g = Game(800, 800, 10000)
