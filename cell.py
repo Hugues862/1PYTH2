@@ -16,8 +16,9 @@ class Cell():
             9: "#32008F",
             0: "#000000"
         }
-
+        # State of cell
         self.__state = 0
+        # color of cell
         self.__color = ""
         self.__highlighted = False
         self.__checked = False
@@ -64,6 +65,10 @@ class Cell():
     # Methods
 
     def randomState(self):
+        '''Selects a random state for the cell
+
+        Uses probabilities.
+        '''
         rdm = random()
 
         if rdm <= 0.4:
