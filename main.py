@@ -1,5 +1,5 @@
 from table import *
-from score import *
+import score
 
 from random import *
 from tkinter import *
@@ -165,9 +165,9 @@ class Game():
                 self.destroy()
 
     def updateLabels(self):
-        self.__items[1].config(text="High Score : " + getHighScore())
-        self.__items[2].config(text="Score : "+ self.getScore())
-        self.__items[3].config(text="Max : "+ self.getMax())
+        self.__items[1].config(text="High Score : " + score.getHighScore())
+        self.__items[2].config(text="Score : " + self.getScore())
+        self.__items[3].config(text="Max : " + self.getMax())
 
         self.__items[7].config(text=self.__timer)
 
@@ -258,5 +258,6 @@ class Game():
         if self.getScore() > int(getHighScore()):
             setScore(self.getScore())
         self.__root.destroy()
-        
+
+
 g = Game(800, 800, 10000)

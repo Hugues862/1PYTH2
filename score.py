@@ -1,8 +1,5 @@
-from random import expovariate
-
-
 def getHighScore():
-    with open("./1PYTH2/score.py", 'r') as file:
+    with open("./1PYTH2/score.txt", 'r') as file:
         lines = file.readlines()
         return lines[0]
 
