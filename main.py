@@ -20,6 +20,8 @@ class Game():
         self.__root = Tk()
         self.__root.configure(background='white')
         self.__root.bind('<Button-1>', self.updateClick)
+        self.__root.bind('<Escape>', self.escapeKey)
+        self.__root.attributes("-fullscreen", True)
 
         self.__root.title = ("Just Get Ten")
 
@@ -80,6 +82,10 @@ class Game():
         self.__root.mainloop()
 
     # Getters
+
+    def escapeKey(self, event=None):
+        exit()
+        return "break"
 
     def getWin(self):
         return self.__win
