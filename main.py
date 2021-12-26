@@ -164,7 +164,7 @@ class Game():
 
     def updateLabels(self):
         self.__items[1].config(text="High Score : " + score.getHighScore())
-        self.__items[2].config(text="Score : " + self.getScore())
+        self.__items[2].config(text="Score : " + str(self.getScore()))
         self.__items[3].config(text="Max : " + self.getMax())
         self.__items[7].config(text=self.__timer)
 
