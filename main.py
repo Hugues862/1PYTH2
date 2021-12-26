@@ -141,7 +141,7 @@ class Game():
 
     def initTable(self):
         self.__cellCount = self.__items[4].get()
-        return Table(self.__cellCount, self.__cellCount)
+        return Table(self.__cellCount, self.__cellCount, level=1)
 
     def newTable(self):
         self.__table = self.initTable()

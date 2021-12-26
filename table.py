@@ -15,9 +15,10 @@ def clear():
 
 class Table():
 
-    def __init__(self, row=5, col=5):
+    def __init__(self, row=5, col=5, level=2):
         self.__row = row
         self.__col = col
+        self.__level = level
 
         self.__grid = self.initGrid()
 
@@ -46,7 +47,7 @@ class Table():
     # Methods
 
     def initGrid(self):
-        grid = [[Cell() for col in range(self.__col)]
+        grid = [[Cell(self.__level) for col in range(self.__col)]
                 for row in range(self.__row)]
         return grid
 
@@ -131,22 +132,22 @@ class Table():
 
                         # fin au dessus
                         if y == 0:
-                            self.__grid[y][x].randomState()
+                            self.__grid[y][x].randomState(self.__level)
             if empty:
                 down()
 
         down()
-    
-    def addState(self, x, y): # Adds 1 to state in pos X Y in the grid
-        
+
+    def addState(self, x, y):  # Adds 1 to state in pos X Y in the grid
+
         self.__grid[y][x].setState(self.__grid[y][x].getState() + 1)
-        
+
     def win(self):
-        
+
         for i in self.__grid:
-            
+
             for j in i:
-                
+
                 if j.getState() == 10:
-                    return True                
+                    return True
         return False
