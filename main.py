@@ -160,7 +160,7 @@ class Game():
                 self.__root.destroy()
 
     def updateLabels(self):
-        self.__items[1].config(text="High Score : "+getHighScore())
+        self.__items[1].config(text="High Score : " + getHighScore())
         self.__items[2].config(text="Score : "+self.getScore())
         self.__items[3].config(text="Max : "+self.getMax())
 
