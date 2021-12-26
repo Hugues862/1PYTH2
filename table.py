@@ -136,6 +136,10 @@ class Table():
                 down()
 
         down()
+    
+    def addState(self, x, y):
+        
+        self.__grid[y][x].setState(self.__grid[y][x].getState() + 1)
         
     def win(self):
         
