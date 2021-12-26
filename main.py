@@ -85,8 +85,7 @@ class Game():
     # Getters
 
     def escapeKey(self, event=None):
-        self.__root.destroy()
-        return "break"
+        self.destroy()
 
     def getWin(self):
         return self.__win
@@ -119,7 +118,7 @@ class Game():
 
     def setWin(self, win):
         self.__win = win
-        
+
     def setScore(self, score):
         self.__score = score
 
@@ -152,7 +151,7 @@ class Game():
 
         else:
             self.__table.gravity()
-            self.__table.displayTable()
+            ''' self.__table.displayTable() '''
             self.drawGrid()
             self.updateLabels()
 
@@ -163,6 +162,7 @@ class Game():
                 self.destroy()
 
     def updateLabels(self):
+
         self.__items[1].config(text="High Score : " + score.getHighScore())
         self.__items[2].config(text="Score : " + str(self.getScore()))
         self.__items[3].config(text="Max : " + self.getMax())
@@ -174,7 +174,6 @@ class Game():
                 t -= 1
                 mins, secs = divmod(t, 60)
                 self.__timer = '{:02d}:{:02d}'.format(mins, secs)
-                print(self.__timer, end="\r")
                 sleep(1)
                 self.updateLabels()
                 if self.__stopThread == True:
@@ -199,12 +198,13 @@ class Game():
         if len(neighborPos) > 1:
             # Boolean of whether it's highlighted or not
             val = self.getTable().getGrid()[neighborPos[0]
-                                         [1]][neighborPos[0][0]].getHighlight()
+                                            [1]][neighborPos[0][0]].getHighlight()
 
             if val:
-                
-                self.addScore(len(neighborPos) * self.getTable().getGrid()[y][x].getState())
-                
+
+                self.addScore(len(neighborPos) *
+                              self.getTable().getGrid()[y][x].getState())
+
                 self.removeCells(neighborPos[1:])
                 self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
                     False)
@@ -258,8 +258,10 @@ class Game():
         if self.getScore() > int(score.getHighScore()):
             score.setScore(self.getScore())
         self.__root.destroy()
-        
+        exit()
+
     def addScore(self, score):
         self.setScore(self.getScore() + score)
-        
+
+
 g = Game(800, 800, 10000)
