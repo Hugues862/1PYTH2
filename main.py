@@ -3,6 +3,7 @@ import score
 
 from random import *
 from tkinter import *
+from tkinter import ttk
 from time import sleep, time
 import math
 from threading import *
@@ -72,6 +73,7 @@ class Game():
         self.__cellCount = self.__items[4].get()
         self.__timer = None
         self.__defaultTime = timer
+        self.__game = True
 
         self.__stopThread = False
         self.__timerThread = Thread(
@@ -113,6 +115,15 @@ class Game():
 
     def getTable(self):
         return self.__table
+    
+    def getTimer(self):
+        return self.__timer
+    
+    def getDefaultTimer(self):
+        return self.__defaultTime
+    
+    def getGame(self):
+        return self.__game
 
     # Setters
 
@@ -134,6 +145,15 @@ class Game():
     def setTable(self, table):
         self.__table = table
 
+    def setTimer(self, time):
+        self.__timer = time
+        
+    def setDefaultTimer(self, time):
+        self.__defaultTime = time
+        
+    def setGame(self, gameState):
+        self.__game = gameState
+        
     # Methods
 
     def initTable(self):
@@ -148,7 +168,9 @@ class Game():
 
     def update(self):
         if self.__timer == "00:00":
-            self.destroy()
+            # self.destroy()
+            self.setGame(False)
+            self.endScreen()
 
         else:
             self.__table.gravity()
@@ -194,30 +216,34 @@ class Game():
             self.highlightCells(x, y)
 
     def highlightCells(self, x, y):
-        neighborPos = self.getTable().getNeighborsPos(
-            x, y)  # List of x and y of all neighbors
-        if len(neighborPos) > 1:
-            # Boolean of whether it's highlighted or not
-            val = self.getTable().getGrid()[neighborPos[0]
-                                            [1]][neighborPos[0][0]].getHighlight()
+        
+        if self.getGame():
+            
+            neighborPos = self.getTable().getNeighborsPos(
+                x, y)  # List of x and y of all neighbors
+            if len(neighborPos) > 1:
+                # Boolean of whether it's highlighted or not
+                val = self.getTable().getGrid()[neighborPos[0]
+                                                [1]][neighborPos[0][0]].getHighlight()
 
-            if val:
+                if val:
 
-                self.addScore(len(neighborPos) *
-                              self.getTable().getGrid()[y][x].getState())
+                    self.addScore(len(neighborPos) *
+                                self.getTable().getGrid()[y][x].getState())
 
-                self.removeCells(neighborPos[1:])
-                self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
-                    False)
-                self.addUp(neighborPos[0])
+                    self.removeCells(neighborPos[1:])
+                    self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
+                        False)
+                    self.addUp(neighborPos[0])
 
-            for item in neighborPos:
-                if val == False:
-                    self.__table.getGrid()[item[1]][item[0]].setHighlight(
-                        True)  # If not then add highlight
-            del neighborPos
+                for item in neighborPos:
+                    if val == False:
+                        self.__table.getGrid()[item[1]][item[0]].setHighlight(
+                            True)  # If not then add highlight
+                del neighborPos
 
-        self.update()
+            self.update()
+            
 
     def removeCells(self, items):
         for item in items:
@@ -259,13 +285,34 @@ class Game():
         if self.getScore() > int(score.getHighScore()):
             score.setScore(self.getScore())
         
-    def destroy(self):
+    def destroy(self, exit = True):
         self.updateHighscore()
         self.__root.destroy()
-        exit()
+        
+        if exit :
+            exit()
 
     def addScore(self, score):
         self.setScore(self.getScore() + score)
 
-
-g = Game(800, 800, 10000)
+    def endScreen(self):
+        
+        def newGame():
+            
+            g = Game(self.getWidth(), self.getHeight(), self.getDefaultTimer())
+            self.destroy(False)
+        
+        self.__canvas.delete("all")
+            
+        # self.__popup = Toplevel()
+        
+        # self.__popup.title('Results')
+        
+        Button(self.__canvas, text = 'Nouvelle Partie', command = newGame).pack(padx=10, pady=10)
+        
+        # self.__popup.transient(self.__root)
+        # self.__popup.grab_set()
+        # self.__root.wait_window(self.__popup)
+        
+        
+g = Game(800, 800, 1)
