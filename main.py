@@ -7,17 +7,21 @@ from tkinter import ttk
 from time import sleep, time
 import math
 from threading import *
+from functools import partial
 
 
 class Game():
 
-    def __init__(self, width, height, timer):
+    def __init__(self, width, height, time):
         self.__width = width
         self.__height = height
-
         self.__fontMult = 0.7
+        
         self.__win = False
-        self.__score = 0
+        self.__score = 0        
+        self.__timer = None
+        self.__defaultTime = time
+        self.__game = None
 
         self.__root = Tk()
         self.__root.configure(background='white')
@@ -27,60 +31,12 @@ class Game():
 
         self.__root.title = ("Just Get Ten")
 
-        # FRAME1
-        self.__frame1 = Frame(self.__root)
-        self.__frame1.grid(row=0, column=0)
-
-        self.__canvas = Canvas(self.__frame1)
-        self.__canvas.config(width=width, height=height,
-                             highlightthickness=0, bd=0, bg="black")
-        self.__canvas.pack()
-
-        # FRAME2
-        self.__frame2 = Frame(self.__root)
-        self.__frame2.grid(
-            row=0, column=1, padx=self.__width/10)
-
-        self.__items = []
-        self.__items.append(
-            Label(self.__frame2, text="Just Get Ten", font=("Courier", int(44*self.__fontMult))))
-
-        self.__items.append(
-            Label(self.__frame2, text="High Score : ", font=("Courier", int(44*self.__fontMult))))
-
-        self.__items.append(
-            Label(self.__frame2, text="Score : ", font=("Courier", int(34*self.__fontMult))))
-
-        self.__items.append(
-            Label(self.__frame2, text="Max : ", font=("Courier", int(34*self.__fontMult))))
-
-        self.__items.append(Scale(self.__frame2, orient='horizontal',
-                                  from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", int(24*self.__fontMult))))
-        self.__items[4].set(5)
-
-        self.__items.append(Button(
-            self.__frame2, text="New Grid", command=self.newTable, font=("Courier", int(24*self.__fontMult))))
-
-        self.__items.append(
-            Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult))))
-        self.__items.append(
-            Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult))))
-
-        for item in self.__items:
-            item.pack(padx=0, pady=5)
-
-        self.__table = self.initTable()
-        self.__cellCount = self.__items[4].get()
-        self.__timer = None
-        self.__defaultTime = timer
-        self.__game = True
-
-        self.__stopThread = False
-        self.__timerThread = Thread(
-            target=self.countdown, args=(self.__defaultTime,))
-        self.__timerThread.start()
-
-        self.update()
+        # BASE
+        
+        self.__base = Frame(self.__root)
+        self.__base.grid(row=0, column=0)
+          
+        self.changeMenu(0)
 
         self.__root.mainloop()
 
@@ -124,6 +80,9 @@ class Game():
     
     def getGame(self):
         return self.__game
+    
+    def getDisplay(self):
+        return self.__display
 
     # Setters
 
@@ -153,6 +112,9 @@ class Game():
         
     def setGame(self, gameState):
         self.__game = gameState
+    
+    def setDisplay(self, display):
+        self.__display = display
         
     # Methods
 
@@ -165,14 +127,148 @@ class Game():
         self.updateHighscore()
         self.setScore(0)
         self.update()
-
-    def update(self):
-        if self.__timer == "00:00":
-            # self.destroy()
+        
+    def frameDisplay(self):
+        
+        for widget in self.__base.winfo_children():
+            widget.destroy()
+        
+        if self.getDisplay() == 0:
+            title = "Just Get Ten"
+            
+        if self.getDisplay() == 2:
+            
+            if self.getWin(): title = "YOU WIN"
+            else: title = "YOU LOSE"
+        
+        if self.getDisplay() == 0 or self.getDisplay() == 2: # Menu
+            
             self.setGame(False)
-            self.endScreen()
+            
+            # Menu Frame
+            
+            self.__menuItems = []
+            
+            self.__menuItems.append(
+                Label(self.__base, text=title, font=("Courier", int(60*self.__fontMult))))
 
-        else:
+            self.__menuItems.append(
+                Label(self.__base, text="High Score : " + score.getHighScore(), font=("Courier", int(44*self.__fontMult))))
+
+            self.__menuItems.append(
+                Label(self.__base, text="Score : " + str(self.getScore()), font=("Courier", int(34*self.__fontMult))))
+            
+            self.__menuItems.append(Button(
+                self.__base, text="New Game", command = partial(self.changeMenu, 1), font=("Courier", int(34*self.__fontMult))))
+            
+            self.__menuItems.append(
+                Label(self.__base, text="Select Time", font=("Courier", int(44*self.__fontMult))))
+            
+            self.__menuItems.append(Button(
+                self.__base, text="1 min", command = partial(self.setDefaultTimer, 60), font=("Courier", int(34*self.__fontMult))))
+            
+            self.__menuItems.append(Button(
+                self.__base, text="3 min", command = partial(self.setDefaultTimer, 180), font=("Courier", int(34*self.__fontMult))))
+            
+            self.__menuItems.append(Button(
+                self.__base, text="Endless", command = partial(self.setDefaultTimer, -1), font=("Courier", int(34*self.__fontMult))))
+
+            
+            for i in range(len(self.__menuItems)):
+                self.__menuItems[i].grid(row = i, column = 0)
+            
+            
+        if self.getDisplay() == 1: # Game
+            
+            self.setGame(True)
+            
+            # Game Frame
+        
+            self.__frame1 = Frame(self.__base)
+            self.__frame1.grid(row=0, column=0, )
+
+            self.__canvas = Canvas(self.__frame1)
+            self.__canvas.config(width=self.__width, height=self.__height,
+                                highlightthickness=0, bd=0, bg="black")
+            self.__canvas.pack()
+
+            # User Frame
+            
+            self.__frame2 = Frame(self.__base)
+            self.__frame2.grid(
+                row=0, column=1, padx=self.__width/10)
+
+            self.__items = []
+            self.__items.append(
+                Label(self.__frame2, text="Just Get Ten", font=("Courier", int(44*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="High Score : ", font=("Courier", int(44*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="Score : ", font=("Courier", int(34*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="Max : ", font=("Courier", int(34*self.__fontMult))))
+
+            self.__items.append(Scale(self.__frame2, orient='horizontal',
+                                    from_=3, to=10, resolution=1, label="Cells", length=200, font=("Courier", int(24*self.__fontMult))))
+            self.__items[4].set(5)
+
+            self.__items.append(Button(
+                self.__frame2, text="New Grid", command=self.newTable, font=("Courier", int(24*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult))))
+            self.__items.append(
+                Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult))))
+
+            for item in self.__items:
+                item.pack(padx=0, pady=5)
+
+            self.__table = self.initTable()
+            self.__cellCount = self.__items[4].get()
+
+            if self.getDefaultTimer() == -1:
+                
+                self.__timer = "Endless"
+                
+            else:
+                self.__stopThread = False
+                self.__timerThread = Thread(
+                    target=self.countdown, args=(self.__defaultTime,))
+                self.__timerThread.start()
+
+            self.update()
+        
+        if self.getDisplay() == 2: # Game Over
+            
+            self.setGame(False)
+            
+            pass
+
+    def changeMenu(self, displayState):
+        
+        self.setDisplay(displayState)
+        self.frameDisplay()
+        self.update()
+    
+    def update(self):
+        
+        if self.getDisplay() == 0:
+            
+            pass
+        
+        if self.getDisplay() == 1:
+            
+            # if self.__timer == "00:00":
+                
+            #     self.destroy()
+                
+            #     # self.changeMenu(2)
+
+            # else:
+            
             self.__table.gravity()
             ''' self.__table.displayTable() '''
             self.drawGrid()
@@ -182,8 +278,12 @@ class Game():
 
             if self.getWin() == True:
 
-                self.destroy()
+                self.changeMenu(2)
 
+        if self.getDisplay() == 2:
+            
+            pass
+        
     def updateLabels(self):
 
         self.__items[1].config(text="High Score : " + score.getHighScore())
@@ -196,12 +296,16 @@ class Game():
             while t:
                 t -= 1
                 mins, secs = divmod(t, 60)
-                self.__timer = '{:02d}:{:02d}'.format(mins, secs)
+                self.setTimer('{:02d}:{:02d}'.format(mins, secs))
                 sleep(1)
                 self.updateLabels()
                 if self.__stopThread == True:
                     self.__stopThread = False
                     break
+                
+        if self.__timer == "00:00":
+            
+            self.changeMenu(2)
 
     def updateClick(self, event):
         self.__mouseX = event.x
@@ -285,34 +389,15 @@ class Game():
         if self.getScore() > int(score.getHighScore()):
             score.setScore(self.getScore())
         
-    def destroy(self, exit = True):
+    def destroy(self, leave = True):
         self.updateHighscore()
         self.__root.destroy()
         
-        if exit :
+        if leave:
             exit()
 
     def addScore(self, score):
         self.setScore(self.getScore() + score)
-
-    def endScreen(self):
-        
-        def newGame():
-            
-            g = Game(self.getWidth(), self.getHeight(), self.getDefaultTimer())
-            self.destroy(False)
-        
-        self.__canvas.delete("all")
-            
-        # self.__popup = Toplevel()
-        
-        # self.__popup.title('Results')
-        
-        Button(self.__canvas, text = 'Nouvelle Partie', command = newGame).pack(padx=10, pady=10)
-        
-        # self.__popup.transient(self.__root)
-        # self.__popup.grab_set()
-        # self.__root.wait_window(self.__popup)
         
         
-g = Game(800, 800, 1)
+g = Game(800, 800, -1)
