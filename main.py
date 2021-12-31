@@ -12,7 +12,7 @@ from functools import partial
 
 class Game():
 
-    def __init__(self, width, height, time):
+    def __init__(self, width, height):
         self.__width = width
         self.__height = height
         self.__fontMult = 0.7
@@ -20,7 +20,7 @@ class Game():
         self.__win = False
         self.__score = 0        
         self.__timer = None
-        self.__defaultTime = time
+        self.__defaultTime = 60
         self.__game = None
 
         self.__root = Tk()
@@ -180,6 +180,7 @@ class Game():
             
         if self.getDisplay() == 1: # Game
             
+            self.setTimer(None)
             self.setGame(True)
             
             # Game Frame
@@ -400,4 +401,4 @@ class Game():
         self.setScore(self.getScore() + score)
         
         
-g = Game(800, 800, -1)
+g = Game(800, 800)
