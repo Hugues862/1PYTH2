@@ -123,6 +123,7 @@ class Game():
         return Table(self.__cellCount, self.__cellCount, level=1)
 
     def newTable(self):
+        
         self.__table = self.initTable()
         self.updateHighscore()
         self.setScore(0)
@@ -223,6 +224,18 @@ class Game():
                 Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult))))
             self.__items.append(
                 Label(self.__frame2, text="00:00", font=("Courier", int(40*self.__fontMult))))
+            
+            self.__items.append(
+                Label(self.__frame2, text="Select Time", font=("Courier", int(40*self.__fontMult))))
+            
+            self.__items.append(Button(
+                self.__frame2, text="1 min", command = partial(self.setDefaultTimer, 60), font=("Courier", int(24*self.__fontMult))))
+            
+            self.__items.append(Button(
+                self.__frame2, text="3 min", command = partial(self.setDefaultTimer, 180), font=("Courier", int(24*self.__fontMult))))
+            
+            self.__items.append(Button(
+                self.__frame2, text="Endless", command = partial(self.setDefaultTimer, -1), font=("Courier", int(24*self.__fontMult))))
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)
@@ -235,10 +248,7 @@ class Game():
                 self.__timer = "Endless"
                 
             else:
-                self.__stopThread = False
-                self.__timerThread = Thread(
-                    target=self.countdown, args=(self.__defaultTime,))
-                self.__timerThread.start()
+                self.startCountdown()
 
             self.update()
         
@@ -247,7 +257,7 @@ class Game():
             self.setGame(False)
             
             pass
-
+    
     def changeMenu(self, displayState):
         
         self.setDisplay(displayState)
@@ -292,6 +302,13 @@ class Game():
         self.__items[3].config(text="Max : " + self.getMax())
         self.__items[7].config(text=self.__timer)
 
+    def startCountdown(self):
+        
+        self.__stopThread = False
+        self.__timerThread = Thread(
+            target=self.countdown, args=(self.__defaultTime,))
+        self.__timerThread.start()
+                
     def countdown(self, t):
         if self.__timer == None:
             while t:
