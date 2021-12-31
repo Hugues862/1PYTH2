@@ -32,7 +32,7 @@ class TimerClass(threading.Thread):
 
 class Game():
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, time):
         self.__width = width
         self.__height = height
         self.__fontMult = 0.7
@@ -40,7 +40,7 @@ class Game():
         self.__win = False
         self.__score = 0
         self.__timer = None
-        self.__defaultTime = 60
+        self.__defaultTime = time
         self.__game = None
 
         self.__root = Tk()
@@ -145,6 +145,7 @@ class Game():
     def newTable(self):
 
         self.__table = self.initTable()
+        self.__timerThread.stop()
         self.updateHighscore()
         self.setScore(0)
         self.startCountdown()
@@ -168,6 +169,11 @@ class Game():
         if self.getDisplay() == 0 or self.getDisplay() == 2:  # Menu
 
             self.setGame(False)
+            
+            try:
+                self.__timerThread.stop()
+            except:
+                pass
 
             # Menu Frame
 
@@ -189,13 +195,13 @@ class Game():
                 Label(self.__base, text="Select Time", font=("Courier", int(44*self.__fontMult))))
 
             self.__menuItems.append(Button(
-                self.__base, text="1 min", command=partial(self.resetCountdown, 60), font=("Courier", int(34*self.__fontMult))))
+                self.__base, text="1 min", command=partial(self.setDefaultTimer, 60), font=("Courier", int(34*self.__fontMult))))
 
             self.__menuItems.append(Button(
-                self.__base, text="3 min", command=partial(self.resetCountdown, 180), font=("Courier", int(34*self.__fontMult))))
+                self.__base, text="3 min", command=partial(self.setDefaultTimer, 180), font=("Courier", int(34*self.__fontMult))))
 
             self.__menuItems.append(Button(
-                self.__base, text="Endless", command=partial(self.resetCountdown, -1), font=("Courier", int(34*self.__fontMult))))
+                self.__base, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(34*self.__fontMult))))
 
             for i in range(len(self.__menuItems)):
                 self.__menuItems[i].grid(row=i, column=0)
@@ -250,13 +256,13 @@ class Game():
                 Label(self.__frame2, text="Select Time", font=("Courier", int(40*self.__fontMult))))
 
             self.__items.append(Button(
-                self.__frame2, text="1 min", command=partial(self.resetCountdown, 60), font=("Courier", int(24*self.__fontMult))))
+                self.__frame2, text="1 min", command=partial(self.setDefaultTimer, 60), font=("Courier", int(24*self.__fontMult))))
 
             self.__items.append(Button(
-                self.__frame2, text="3 min", command=partial(self.resetCountdown, 180), font=("Courier", int(24*self.__fontMult))))
+                self.__frame2, text="3 min", command=partial(self.setDefaultTimer, 180), font=("Courier", int(24*self.__fontMult))))
 
             self.__items.append(Button(
-                self.__frame2, text="Endless", command=partial(self.resetCountdown, -1), font=("Courier", int(24*self.__fontMult))))
+                self.__frame2, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(24*self.__fontMult))))
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)
@@ -276,12 +282,6 @@ class Game():
                 self.startCountdown()
 
             self.update()
-
-        if self.getDisplay() == 2:  # Game Over
-
-            self.setGame(False)
-
-            pass
 
     def changeMenu(self, displayState):
 
@@ -328,15 +328,27 @@ class Game():
         self.__items[7].config(text=self.__timerThread.timer)
 
     def updateTimer(self):
+        
         while True:
-            if self.__timer == "00:00":
+            if self.__timerThread.timer == "00:00":
                 self.changeMenu(2)
+                break
+            
+            if self.__game == False:
+                break
+            
             try:
                 self.__items[7].config(text=self.__timerThread.timer)
 
             except:
-                self.__items[7].config(text=self.__defaultTime)
+                try:
+                    self.__items[7].config(text=self.__defaultTime)
+                except:
+                    pass
             sleep(1)
+            
+            if self.__game == False:
+                break
 
     def resetCountdown(self, time):
         self.__defaultTime = time
@@ -455,4 +467,4 @@ class Game():
         self.setScore(self.getScore() + score)
 
 
-g = Game(800, 800)
+g = Game(800, 800, 2)
