@@ -145,11 +145,6 @@ class Game():
                 title = "YOU LOSE"
 
         if self.getDisplay() == 0 or self.getDisplay() == 2:  # Menu
-
-            try:
-                self.__timerThread.stop()
-            except:
-                pass    
               
             self.setGame(False)
 
@@ -188,6 +183,7 @@ class Game():
 
             self.setGame(True)
             self.setWin(False)
+            self.setScore(0)
 
             # Game Frame
 
@@ -247,15 +243,15 @@ class Game():
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)
-
-            self.__updateTimerThread = threading.Thread(
-                target=self.updateTimer, name="updateTimerThread")
-            self.__updateTimerThread.start()
-
+                
             self.__table = self.initTable()
             self.__cellCount = self.__items[4].get()
 
             self.startCountdown()
+
+            self.__updateTimerThread = threading.Thread(
+                target=self.updateTimer, name="updateTimerThread")
+            self.__updateTimerThread.start()
 
             self.update()
 
@@ -297,11 +293,13 @@ class Game():
         while True:
             if self.getTimer() == "00:00":
                 self.changeMenu(2)
+                self.__timerThread.stop()
                 break
             try:
                 self.__items[7].config(text=self.getTimer())
 
             except:
+                self.__timerThread.stop()
                 break
             # sleep(1)
 
