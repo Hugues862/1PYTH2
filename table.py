@@ -20,6 +20,9 @@ class Table():
         self.__col = col
         self.__level = level
 
+        self.__positions = []
+        self.__selected = False
+
         self.__grid = self.initGrid()
 
     # Getters
@@ -32,7 +35,12 @@ class Table():
 
     def getGrid(self):
         return self.__grid
+    
+    def getPositions(self):
+        return self.__positions
 
+    def getSelected(self):
+        return self.__selected
     # Setters
 
     def setGrid(self, grid):
@@ -44,6 +52,12 @@ class Table():
     def setCol(self, col):
         self.__col = col
 
+    def setPositions(self, positions):
+        self.__positions = positions
+        
+    def setSelected(self, selected):
+        self.__selected = selected
+        
     # Methods
 
     def initGrid(self):
@@ -94,8 +108,8 @@ class Table():
 
     def getNeighborsPos(self, x, y):
 
-        positions = self.checkNeighbors(x, y)
-        return positions
+        self.__positions = self.checkNeighbors(x, y)
+        return self.__positions
 
     def displayTable(self):
         print()

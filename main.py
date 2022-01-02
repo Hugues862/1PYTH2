@@ -1,6 +1,7 @@
 from os import error
 from table import *
 import score
+import timer
 
 from random import *
 from tkinter import *
@@ -11,43 +12,24 @@ import threading
 from functools import partial
 
 
-class TimerClass(threading.Thread):
-    def __init__(self, count):
-        threading.Thread.__init__(self)
-        self.event = threading.Event()
-        self.count = count
-        self.name = "timerThread"
-        self.timer = ""
-
-    def run(self):
-        while self.count > 0 and not self.event.is_set():
-            self.count -= 1
-            mins, secs = divmod(self.count, 60)
-            self.timer = '{:02d}:{:02d}'.format(mins, secs)
-            self.event.wait(1)
-
-    def stop(self):
-        self.event.set()
-
 
 class Game():
 
-    def __init__(self, width, height, time):
+    def __init__(self, width, height):
         self.__width = width
         self.__height = height
         self.__fontMult = 0.7
 
         self.__win = False
         self.__score = 0
-        self.__timer = None
-        self.__defaultTime = time
+        self.__defaultTime = 60
         self.__game = None
 
         self.__root = Tk()
         self.__root.configure(background='white')
         self.__root.bind('<Button-1>', self.updateClick)
         self.__root.bind('<Escape>', self.escapeKey)
-        self.__root.attributes("-fullscreen", False)
+        self.__root.attributes("-fullscreen", True)
 
         self.__root.title = ("Just Get Ten")
 
@@ -93,7 +75,7 @@ class Game():
         return self.__table
 
     def getTimer(self):
-        return self.__timer
+        return self.__timerThread.getTimer()
 
     def getDefaultTimer(self):
         return self.__defaultTime
@@ -124,9 +106,6 @@ class Game():
     def setTable(self, table):
         self.__table = table
 
-    def setTimer(self, time):
-        self.__timer = time
-
     def setDefaultTimer(self, time):
         self.__defaultTime = time
 
@@ -145,7 +124,6 @@ class Game():
     def newTable(self):
 
         self.__table = self.initTable()
-        self.__timerThread.stop()
         self.updateHighscore()
         self.setScore(0)
         self.startCountdown()
@@ -168,12 +146,12 @@ class Game():
 
         if self.getDisplay() == 0 or self.getDisplay() == 2:  # Menu
 
-            self.setGame(False)
-            
             try:
                 self.__timerThread.stop()
             except:
-                pass
+                pass    
+              
+            self.setGame(False)
 
             # Menu Frame
 
@@ -208,7 +186,6 @@ class Game():
 
         if self.getDisplay() == 1:  # Game
 
-            self.setTimer(None)
             self.setGame(True)
 
             # Game Frame
@@ -245,7 +222,7 @@ class Game():
             self.__items[4].set(5)
 
             self.__items.append(Button(
-                self.__frame2, text="New Grid", command=self.newTable, font=("Courier", int(24*self.__fontMult))))
+                self.__frame2, text="New Grid", command=self.reset, font=("Courier", int(24*self.__fontMult))))
 
             self.__items.append(
                 Label(self.__frame2, text="Time Left", font=("Courier", int(40*self.__fontMult))))
@@ -263,6 +240,9 @@ class Game():
 
             self.__items.append(Button(
                 self.__frame2, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(24*self.__fontMult))))
+            
+            self.__items.append(Button(
+                self.__frame2, text="1", command=partial(self.setDefaultTimer, 2), font=("Courier", int(24*self.__fontMult))))
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)
@@ -274,14 +254,15 @@ class Game():
             self.__table = self.initTable()
             self.__cellCount = self.__items[4].get()
 
-            if self.getDefaultTimer() == -1:
-
-                self.__timer = "Endless"
-
-            else:
-                self.startCountdown()
+            self.startCountdown()
 
             self.update()
+
+        if self.getDisplay() == 2:  # Game Over
+
+            self.setGame(False)
+
+            pass
 
     def changeMenu(self, displayState):
 
@@ -325,55 +306,27 @@ class Game():
         self.__items[1].config(text="High Score : " + score.getHighScore())
         self.__items[2].config(text="Score : " + str(self.getScore()))
         self.__items[3].config(text="Max : " + self.getMax())
-        self.__items[7].config(text=self.__timerThread.timer)
+        self.__items[7].config(text=self.getTimer())
 
     def updateTimer(self):
-        
         while True:
-            if self.__timerThread.timer == "00:00":
+            if self.getTimer() == "00:00":
                 self.changeMenu(2)
                 break
-            
-            if self.__game == False:
-                break
-            
             try:
-                self.__items[7].config(text=self.__timerThread.timer)
+                self.__items[7].config(text=self.getTimer())
 
             except:
-                try:
-                    self.__items[7].config(text=self.__defaultTime)
-                except:
-                    pass
-            sleep(1)
-            
-            if self.__game == False:
-                break
+                self.__items[7].config(text=self.__defaultTime)
+            # sleep(1)
 
-    def resetCountdown(self, time):
-        self.__defaultTime = time
+    def reset(self):
         self.__timerThread.stop()
         self.newTable()
 
     def startCountdown(self):
-        self.__timerThread = TimerClass(self.__defaultTime)
+        self.__timerThread = timer.TimerClass(self.__defaultTime)
         self.__timerThread.start()
-
-    def countdown(self, t):
-        if self.__timer == None:
-            while t:
-                t -= 1
-                mins, secs = divmod(t, 60)
-                self.setTimer('{:02d}:{:02d}'.format(mins, secs))
-                sleep(1)
-                self.updateLabels()
-                if self.__stopThread == True:
-                    self.__stopThread = False
-                    break
-
-        if self.__timer == "00:00":
-
-            self.changeMenu(2)
 
     def updateClick(self, event):
         self.__mouseX = event.x
@@ -391,29 +344,43 @@ class Game():
 
         if self.getGame():
 
-            neighborPos = self.getTable().getNeighborsPos(
-                x, y)  # List of x and y of all neighbors
-            if len(neighborPos) > 1:
-                # Boolean of whether it's highlighted or not
-                val = self.getTable().getGrid()[neighborPos[0]
-                                                [1]][neighborPos[0][0]].getHighlight()
+            if self.__table.getSelected() == True and self.getTable().getGrid()[y][x].getHighlight() == False:
+                
+                for item in self.__table.getPositions():
+                    
+                    self.__table.getGrid()[item[1]][item[0]].setHighlight(False)  # If yes then remove highlight
+                self.__table.setSelected(False)
+                
+            else :
+                
+                neighborPos = self.getTable().getNeighborsPos(
+                    x, y)  # List of x and y of all neighbors
+                if len(neighborPos) > 2:
+                    # Boolean of whether it's highlighted or not
+                    val = self.getTable().getGrid()[neighborPos[0]
+                                                    [1]][neighborPos[0][0]].getHighlight()
 
-                if val:
+                    if val:
+                        
+                        self.__table.setSelected(False)
 
-                    self.addScore(len(neighborPos) *
-                                  self.getTable().getGrid()[y][x].getState())
+                        self.addScore(len(neighborPos) *
+                                    self.getTable().getGrid()[y][x].getState())
 
-                    self.removeCells(neighborPos[1:])
-                    self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
-                        False)
-                    self.addUp(neighborPos[0])
+                        self.removeCells(neighborPos[1:])
+                        self.__table.getGrid()[neighborPos[0][1]][neighborPos[0][0]].setHighlight(
+                            False)
+                        self.addUp(neighborPos[0])
 
-                for item in neighborPos:
                     if val == False:
-                        self.__table.getGrid()[item[1]][item[0]].setHighlight(
-                            True)  # If not then add highlight
+                        
+                        self.__table.setSelected(True)
+                        
+                        for item in neighborPos:
+                                self.__table.getGrid()[item[1]][item[0]].setHighlight(
+                                    True)  # If not then add highlight
                 del neighborPos
-
+                
             self.update()
 
     def removeCells(self, items):
@@ -467,4 +434,4 @@ class Game():
         self.setScore(self.getScore() + score)
 
 
-g = Game(800, 800, 2)
+g = Game(800, 800)
