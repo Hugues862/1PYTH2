@@ -338,7 +338,7 @@ class Game():
                 
                 neighborPos = self.getTable().getNeighborsPos(
                     x, y)  # List of x and y of all neighbors
-                if len(neighborPos) > 2:
+                if len(neighborPos) > 1:
                     # Boolean of whether it's highlighted or not
                     val = self.getTable().getGrid()[neighborPos[0]
                                                     [1]][neighborPos[0][0]].getHighlight()
