@@ -187,6 +187,7 @@ class Game():
         if self.getDisplay() == 1:  # Game
 
             self.setGame(True)
+            self.setWin(False)
 
             # Game Frame
 
@@ -272,19 +273,7 @@ class Game():
 
     def update(self):
 
-        if self.getDisplay() == 0:
-
-            pass
-
         if self.getDisplay() == 1:
-
-            # if self.__timer == "00:00":
-
-            #     self.destroy()
-
-            #     # self.changeMenu(2)
-
-            # else:
 
             self.__table.gravity()
             ''' self.__table.displayTable() '''
@@ -296,11 +285,7 @@ class Game():
             if self.getWin() == True:
 
                 self.changeMenu(2)
-
-        if self.getDisplay() == 2:
-
-            pass
-
+                
     def updateLabels(self):
 
         self.__items[1].config(text="High Score : " + score.getHighScore())
@@ -317,7 +302,7 @@ class Game():
                 self.__items[7].config(text=self.getTimer())
 
             except:
-                self.__items[7].config(text=self.__defaultTime)
+                break
             # sleep(1)
 
     def reset(self):
