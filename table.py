@@ -4,6 +4,10 @@ from cell import *
 
 
 def clear():
+    """
+    Clears the console for better clarity and reading.
+    """
+
     # for windows
     if name == 'nt':
         _ = system('cls')
@@ -15,7 +19,16 @@ def clear():
 
 class Table():
 
-    def __init__(self, row=5, col=5, level=2):
+    def __init__(self, level, row, col):
+        """
+        Intializes a new table.
+        
+            Parameters:
+                level (int): Difficulty of the table. 1 to 3.
+                row (int): Number of rows of the table.
+                col (int): Numer of columns of the table.          
+        """
+
         self.__row = row
         self.__col = col
         self.__level = level
@@ -28,15 +41,39 @@ class Table():
     # Getters
 
     def getRow(self):
+        """
+        Gets the number of rows of the table.
+        
+            Returns:
+                int: Number of rows of the table.
+        """
         return self.__row
 
     def getCol(self):
+        """
+        Gets the number of columns of the table.
+
+            Returns:
+                int: Number of columns of the table.
+        """
         return self.__col
 
     def getGrid(self):
+        """
+        Gets the grid representing the table.
+
+            Returns:
+                matrice: Array of arrays of cells (object).
+        """
         return self.__grid
     
     def getPositions(self):
+        """
+        Gets the positions of the last saved and checked neighbors.
+
+            Returns:
+                array: Array of tuples containing X, Y integers.
+        """
         return self.__positions
 
     def getSelected(self):

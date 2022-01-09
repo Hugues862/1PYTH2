@@ -12,6 +12,16 @@ import threading
 from functools import partial
 
 
+"""
+        Summary
+        
+            Parameters:
+            
+            
+            Returns:
+            
+"""
+
 
 class Game():
 
@@ -24,6 +34,7 @@ class Game():
         self.__score = 0
         self.__defaultTime = 60
         self.__game = None
+        self.__level = 2
 
         self.__root = Tk()
         self.__root.configure(background='white')
@@ -86,6 +97,9 @@ class Game():
     def getDisplay(self):
         return self.__display
 
+    def getLevel(self):
+        return self.__level
+
     # Setters
 
     def setWin(self, win):
@@ -115,11 +129,14 @@ class Game():
     def setDisplay(self, display):
         self.__display = display
 
+    def setLevel(self, level):
+        self.__level = level
+
     # Methods
 
     def initTable(self):
         self.__cellCount = self.__items[4].get()
-        return Table(self.__cellCount, self.__cellCount, level=1)
+        return Table(self.__level, self.__cellCount, self.__cellCount)
 
     def newTable(self):
 
@@ -175,6 +192,18 @@ class Game():
 
             self.__menuItems.append(Button(
                 self.__base, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(34*self.__fontMult))))
+
+            self.__menuItems.append(
+                Label(self.__base, text="Select Difficulty", font=("Courier", int(44*self.__fontMult))))
+
+            self.__menuItems.append(Button(
+                self.__base, text="Easy", command=partial(self.setLevel, 1), font=("Courier", int(34*self.__fontMult))))
+
+            self.__menuItems.append(Button(
+                self.__base, text="Hard", command=partial(self.setLevel, 2), font=("Courier", int(34*self.__fontMult))))
+
+            self.__menuItems.append(Button(
+                self.__base, text="Harder", command=partial(self.setLevel, 3), font=("Courier", int(34*self.__fontMult))))
 
             for i in range(len(self.__menuItems)):
                 self.__menuItems[i].grid(row=i, column=0)
@@ -240,6 +269,18 @@ class Game():
             
             self.__items.append(Button(
                 self.__frame2, text="1", command=partial(self.setDefaultTimer, 2), font=("Courier", int(24*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="Select Difficulty", font=("Courier", int(40*self.__fontMult))))
+
+            self.__items.append(Button(
+                self.__frame2, text="Easy", command=partial(self.setLevel, 1), font=("Courier", int(24*self.__fontMult))))
+
+            self.__items.append(Button(
+                self.__frame2, text="Hard", command=partial(self.setLevel, 2), font=("Courier", int(24*self.__fontMult))))
+
+            self.__items.append(Button(
+                self.__frame2, text="Harder", command=partial(self.setLevel, 3), font=("Courier", int(24*self.__fontMult))))
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)

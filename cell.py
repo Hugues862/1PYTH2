@@ -3,8 +3,15 @@ from random import *
 
 class Cell():
 
-    def __init__(self, level):
-        self.__colorDict = {
+    def __init__(self, level: int):
+        """
+        Will initialize a cell and assign it's value / color based on the level's difficulty.
+
+            Parameters:
+                level (int): Level difficuty. 1 to 3.
+        """
+
+        self.__colorDict = { # List of the HEX colors of each different cells (value)
             1: "#31CD32",
             2: "#4068E1",
             3: "#FF8C00",
@@ -16,75 +23,144 @@ class Cell():
             9: "#32008F",
             0: "#000000"
         }
-        self.__diff = {
-            1: {
+
+        self.__diff = { # Probability of cell appearences based on level difficulty
+            1: { # Diffuculty 1
                 0: 0,
                 1: 0.4,
                 2: 0.7,
                 3: 0.95,
                 4: 1
             },
-            2: {
+            2: { # Diffuculty 2
                 0: 0,
                 1: 0.1,
                 2: 0.3,
                 3: 0.6,
                 4: 1
+            },
+
+            3: { # Difficulty 3
+                0: 0,
+                1: 0.1,
+                2: 0.2,
+                3: 0.3,
+                4: 1
             }
         }
-        # State of cell
-        self.__state = 0
-        # color of cell
-        self.__color = ""
-        self.__highlighted = False
-        self.__checked = False
-        self.__level = level
+        
+        self.__state = 0 # Value of the cell
+        self.__color = "" # Hex color assigned based on earlier dictionnary
+        self.__highlighted = False # Highlight (targeted) or not
+        self.__checked = False # if has been already checked during the checkNeighbors function
 
-        self.randomState(self.__level)
-        self.changeColor()
+        self.randomState(level) # Randomize the value of the cell depending on the difficulty probability
+        self.changeColor() # Change color accordingly
 
     # Getters
 
     def getInfo(self):
+        """
+        Gets the state and the color of the cell.
+        
+            Returns:
+                (int, str): State of the cell, Hex color of the cell.
+        """
         return self.__state, self. __color
 
     def getColorDict(self):
+        """
+        Gets the list of colors assigned to each state.
+
+            Returns:
+                (dict of int: str): Dictionnary of the HEX colors assigned to states as keys.
+        """
         return self.__colorDict
 
     def getState(self):
+        """
+        Gets the state of the cell.
+
+            Returns:
+                int: State of the cell.
+        """
         return self.__state
 
     def getColor(self):
+        """
+        Gets the color of the cell.
+
+            Returns:
+                str: Hex color of the cell.
+        """
         return self.__color
 
     def getHighlight(self):
+        """
+        Gets if the cell is highlighted.
+
+            Returns:
+                bool: Highlighted or not.
+        """
         return self.__highlighted
 
     def getChecked(self):
+        """
+        Gets if the cell has already been checked during the process of checking neighbors.
+
+            Returns:
+                bool: Has been checked or not.
+        """
         return self.__checked
 
     # Setters
 
-    def setHighlight(self, val):
+    def setHighlight(self, val: bool):
+        """
+        Sets the state of highlight of the cell.
+        
+            Parameters:
+                val (bool): Highlight or remove highlight.
+        """
         self.__highlighted = val
 
-    def setState(self, n):
+    def setState(self, n: int):
+        """
+        Sets the state of the cell and updates its highlight and color.
+        
+            Parameters:
+                n (int): State of the cell.
+        """
         self.__state = n
-        self.__highlighted = False
-        self.changeColor()
+        self.__highlighted = False # When changing the state (value), remove highlight if there was one
+        self.changeColor() # Change color accordingly to the state 
 
-    def setColor(self, color):
+    def setColor(self, color: str):
+        """
+        Sets the color of the cell.
+        
+            Parameters:
+                color (str): HEX color of the cell.
+        """
         self.__color = color
 
-    def setChecked(self, state):
+    def setChecked(self, state: bool):
+        """
+        Sets if the cell has been checked within the chackNeighbors function.
+        
+            Parameters:
+                state (bool): Checked or not.
+        """
         self.__checked = state
 
     # Methods
 
     def randomState(self, diff):
-        '''Selects a random state for the cell
-
-        Uses probabilities.
+        '''
+        Selects a random state for the cell by using the probabilities given.
+            
+            Parameters:
+                diff (int): Difficulty of the level. 1 to 3.
         '''
         rdm = random()
 
@@ -93,5 +169,8 @@ class Cell():
                 self.setState(i)
 
     def changeColor(self):
+        """
+        Updates the color of the cell according to its state.
+        """
+
         self.setColor(self.__colorDict[self.__state])
-        return
