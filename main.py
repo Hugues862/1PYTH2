@@ -34,7 +34,7 @@ class Game():
         self.__score = 0
         self.__defaultTime = 60
         self.__game = None
-        self.__level = 2
+        self.__level = 1
 
         self.__root = Tk()
         self.__root.configure(background='white')
