@@ -35,6 +35,7 @@ class Game():
         self.__defaultTime = 60
         self.__game = None
         self.__level = 1
+        self.__updateThread = True
 
         self.__root = Tk()
         self.__root.configure(background='white')
@@ -151,6 +152,9 @@ class Game():
             self.__menuItems.append(Button(
                 self.__base, text="Harder", command=partial(self.setLevel, 3), font=("Courier", int(34*self.__fontMult))))
 
+            self.__menuItems.append(
+                Label(self.__base, text="Press ESC to exit", font=("Courier", int(30*self.__fontMult))))
+
             for i in range(len(self.__menuItems)):
                 self.__menuItems[i].grid(row=i, column=0)
 
@@ -213,9 +217,6 @@ class Game():
             self.__items.append(Button(
                 self.__frame2, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(24*self.__fontMult))))
 
-            self.__items.append(Button(
-                self.__frame2, text="1", command=partial(self.setDefaultTimer, 2), font=("Courier", int(24*self.__fontMult))))
-
             self.__items.append(
                 Label(self.__frame2, text="Select Difficulty", font=("Courier", int(40*self.__fontMult))))
 
@@ -227,6 +228,9 @@ class Game():
 
             self.__items.append(Button(
                 self.__frame2, text="Harder", command=partial(self.setLevel, 3), font=("Courier", int(24*self.__fontMult))))
+
+            self.__items.append(
+                Label(self.__frame2, text="Press ESC to exit", font=("Courier", int(30*self.__fontMult))))
 
             for item in self.__items:
                 item.pack(padx=0, pady=5)
@@ -259,7 +263,7 @@ class Game():
         if self.__display == 1:
 
             self.__table.gravity()
-            ''' self.__table.displayTable() '''
+            # self.__table.displayTable()
             self.drawGrid()
             self.updateLabels()
 
@@ -277,7 +281,7 @@ class Game():
         self.__items[7].config(text=self.getTimer())
 
     def updateTimer(self):
-        while True:
+        while self.__updateThread:
             if self.getTimer() == "00:00":
                 self.changeMenu(2)
                 self.__timerThread.stop()
@@ -324,7 +328,7 @@ class Game():
 
             else:
 
-                neighborPos = self.__table.getNeighborsPos(
+                neighborPos = self.__table.updateNeighborsPos(
                     x, y)  # List of x and y of all neighbors
                 if len(neighborPos) > 1:
                     # Boolean of whether it's highlighted or not
@@ -395,6 +399,13 @@ class Game():
             score.__score = self.__score
 
     def destroy(self, leave=True):
+
+        try:
+            self.__timerThread.stop()
+        except:
+            pass
+
+        self.__updateThread = False
         self.updateHighscore()
         self.__root.destroy()
 

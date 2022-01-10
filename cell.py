@@ -155,7 +155,7 @@ class Cell():
 
     # Methods
 
-    def randomState(self, diff):
+    def randomState(self, diff: int):
         '''
         Selects a random state for the cell by using the probabilities given.
             
