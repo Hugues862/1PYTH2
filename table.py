@@ -1,22 +1,6 @@
 from os import system, name
 from time import sleep
 from cell import *
-
-
-def clear():
-    """
-    Clears the console for better clarity and reading.
-    """
-
-    # for windows
-    if name == 'nt':
-        _ = system('cls')
-
-    # for mac and linux(here, os.name is 'posix')
-    else:
-        _ = system('clear')
-
-
 class Table():
     
     def __init__(self, level: int, row: int, col: int):

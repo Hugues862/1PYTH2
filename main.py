@@ -23,9 +23,25 @@ from functools import partial
 """
 
 
+
+def clear():
+    """
+    Clears the console for better clarity and reading.
+    """
+
+    # for windows
+    if name == 'nt':
+        _ = system('cls')
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = system('clear')
 class Game():
 
     def __init__(self, width, height):
+
+        clear()
+
         self.__width = width
         self.__height = height
         self.__fontMult = 0.7
@@ -306,10 +322,10 @@ class Game():
         self.__mouseX = event.x
         self.__mouseY = event.y
 
-        x = math.floor(((self.__mouseX - 0) / (self.__width - 0)) *
-                       (self.__table.getCol() - 0) + 0)
-        y = math.floor(((self.__mouseY - 0) / (self.__height - 0)) *
-                       (self.__table.getRow() - 0) + 0)
+        x = math.floor(((self.__mouseX) / (self.__width)) *
+                       (self.__table.getCol()))
+        y = math.floor(((self.__mouseY) / (self.__height)) *
+                       (self.__table.getRow()))
 
         if event.x_root < self.__width:
             self.highlightCells(x, y)
