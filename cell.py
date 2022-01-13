@@ -57,7 +57,7 @@ class Cell():
         self.randomState(level) # Randomize the value of the cell depending on the difficulty probability
         self.changeColor() # Change color accordingly
 
-    # Getters
+# Getters Start
 
     def getInfo(self):
         """
@@ -113,7 +113,9 @@ class Cell():
         """
         return self.__checked
 
-    # Setters
+# End
+    
+# Setters Start
 
     def setHighlight(self, val: bool):
         """
@@ -153,7 +155,9 @@ class Cell():
         """
         self.__checked = state
 
-    # Methods
+# End
+
+# Methods Start
 
     def randomState(self, diff: int):
         '''
@@ -174,3 +178,5 @@ class Cell():
         """
 
         self.setColor(self.__colorDict[self.__state])
+
+# End

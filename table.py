@@ -38,7 +38,7 @@ class Table():
 
         self.__grid = self.initGrid()
 
-    # Getters
+# Getters Start
 
     def getRow(self):
         """
@@ -84,7 +84,10 @@ class Table():
                 bool: Selected or not (cells highlighted or not).
         """
         return self.__selected
-    # Setters
+
+# End
+
+# Setters Start
 
     def setGrid(self, grid):
         """
@@ -130,8 +133,10 @@ class Table():
                 selected (bool): Selected or not.
         """
         self.__selected = selected
-        
-    # Methods
+
+# End
+    
+# Methods Start
 
     def initGrid(self):
         """
@@ -284,3 +289,5 @@ class Table():
         
         # If no cell value is equal to 10
         return False
+
+# End
