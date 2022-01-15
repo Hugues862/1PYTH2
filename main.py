@@ -81,21 +81,7 @@ class Game():
 
         self.__root.mainloop() # Start the window
 
-    # Getters
-
-    def escapeKey(self, event=None):
-        """
-        When the escape button is pressed, exit tkinter window and program.
-
-            Parameters:
-                event (NoneType): Necessary for key input function. Defaults to None.
-        """
-
-        # (tkinter window exits but program doesn't when in-game because of tkinter module exception on SystemExit)
-        # File "C:\Users\yoann\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
-        # return self.func(*args)
-
-        self.destroy() # Exit Tkinter window and program
+# Getters Start
 
     def getMax(self):
         """
@@ -113,7 +99,7 @@ class Game():
         # self.__max = val
         return str(val)
 
-    def getTimer(self) -> str:
+    def getTimer(self):
         """
         Gets the Time left to the timer.
 
@@ -123,7 +109,9 @@ class Game():
 
         return self.__timerThread.getTimer() # Gets string from Timer class in timer.py
 
-    # Setters
+# Getters End
+
+# Setters Start
 
     def setDefaultTimer(self, time: int):
         """
@@ -145,7 +133,9 @@ class Game():
 
         self.__level = level
 
-    # Methods
+# Setters End
+
+# Methods Start
 
     def initTable(self):
         """
@@ -435,6 +425,23 @@ class Game():
         if event.x_root < self.__width: # If the mouse is within the canvas
             self.highlightCells(x, y) # Then apply the highlight function
 
+    def escapeKey(self, event=None):
+        """
+        When the escape button is pressed, exit tkinter window and program.
+
+            Parameters:
+                event (NoneType): Necessary for key input function. Defaults to None.
+
+            Raises:
+                SystemExit: Tkinter module exception
+        """
+
+        # (tkinter window exits but program doesn't when in-game because of tkinter module exception on SystemExit)
+        # File "C:\Users\yoann\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
+        # return self.func(*args)
+
+        self.destroy() # Exit Tkinter window and program
+
     def highlightCells(self, x: int, y: int):
         """
         Highlights the selected cell and its neighbors if possible.
@@ -576,11 +583,12 @@ class Game():
         """
         Adds a value to the current score.
 
-        Args:
-            score (int): Walue added to the score.
+            Parameters:
+                score (int): Walue added to the score.
         """
-        
+
         self.__score = self.__score + score
 
+# Methods End
 
 g = Game(800, 800)
