@@ -47,7 +47,7 @@ class Table():
         Gets the grid representing the table.
 
             Returns:
-                matrice: Array of arrays of cells (object).
+                matrice: List of lists of cells (object).
         """
         return self.__grid
     
@@ -56,7 +56,7 @@ class Table():
         Gets the positions of the last saved and checked neighbors.
 
             Returns:
-                matrice: Arrays of tuples containing x,y positions of cells
+                matrice: List of tuples containing x,y positions of cells
         """
         return self.__positions
 
@@ -73,12 +73,12 @@ class Table():
 
 # Setters Start
 
-    def setGrid(self, grid):
+    def setGrid(self, grid: list[list[Cell]]):
         """
         Sets the grid to a new grid.
         
             Parameters:
-                grid (matrice): Array of arrays of cells (object).
+                grid (matrice): List of lists of cells (object).
         """
         self.__grid = grid
 
@@ -100,12 +100,12 @@ class Table():
         """
         self.__col = col
 
-    def setPositions(self, positions):
+    def setPositions(self, positions: list[tuple[int, int]]):
         """
         Sets new (x,y) positions of neighbors.
 
             Parameters:
-                positions (arr): Arrays of tuples containing x,y positions of cells
+                positions (matrice): List of tuples containing x,y positions of cells
         """
         self.__positions = positions
         
@@ -127,7 +127,7 @@ class Table():
         Creates a new grid and replaces the previous one with it.
         
             Returns:
-                matrice: Array of arrays of cells (object).
+                matrice: List of lists of cells (object).
         """
 
         grid = [[Cell(self.__level) for col in range(self.__col)]
@@ -144,7 +144,7 @@ class Table():
                 y (int): Y position of the current cell.
 
             Returns:
-                matrice: Arrays of tuples containing x,y positions of cells.
+                matrice: List of tuples containing x,y positions of cells.
         """
 
         tab = [(x, y)] # Creates the list of neighbors of the current cell including the current cell
@@ -207,7 +207,7 @@ class Table():
                 y (int): Y position of the original cell.
             
             Returns:
-                matrice: Arrays of tuples containing x,y positions of cells.
+                matrice: List of tuples containing x,y positions of cells.
         """
 
         self.__positions = self.checkNeighbors(x, y) # Saves the new neighbors's positions
