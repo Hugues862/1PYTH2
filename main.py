@@ -23,6 +23,7 @@ from functools import partial
             
 """
 
+
 def clear():
     """
     Clears the console for better clarity and reading.
@@ -35,53 +36,59 @@ def clear():
     # for mac and linux(here, os.name is 'posix')
     else:
         _ = system('clear')
+
+
 class Game():
 
     def __init__(self, width: int, height: int):
         """
         Initialize variables and start the game window.
-        
+
             Parameters:
                 width (int): width of the main game interface.
                 height (int): height of the main game interface.
         """
 
-        clear() # Clear console
+        clear()  # Clear console
 
         self.__width = width
         self.__height = height
-        self.__fontMult = 0.7 # Font size multiplier
+        self.__fontMult = 0.7  # Font size multiplier
 
         # Sets the default value of the game when the window pops
 
         self.__win = False
         self.__score = 0
         self.__defaultTime = 60
-        self.__game = False # Game state (in game or in menu)
+        self.__game = False  # Game state (in game or in menu)
         self.__level = 1
-        self.__updateThread = True # Want the thread to run at all time when called and break when trying to exit game
+        # Want the thread to run at all time when called and break when trying to exit game
+        self.__updateThread = True
 
         # Creates the tkinter window
 
         self.__root = Tk()
         self.__root.configure(background='white')
         # Binds buttons / keys to methods
-        self.__root.bind('<Button-1>', self.updateClick) # Left click initiate self.updateClick
-        self.__root.bind('<Escape>', self.escapeKey) # Escape key initiate self.excapeKey
+        # Left click initiate self.updateClick
+        self.__root.bind('<Button-1>', self.updateClick)
+        # Escape key initiate self.excapeKey
+        self.__root.bind('<Escape>', self.escapeKey)
         self.__root.attributes("-fullscreen", True)
 
         self.__root.title = ("Just Get Ten")
 
         # BASE
 
-        self.__base = Frame(self.__root) # Create a base frame where everything will be displayed
-        self.__base.grid(row=0, column=0) # Displays it in grid form
+        # Create a base frame where everything will be displayed
+        self.__base = Frame(self.__root)
+        self.__base.grid(row=0, column=0)  # Displays it in grid form
 
-        self.changeMenu(0) # Inititate the creation and display of menu (0)
+        self.changeMenu(0)  # Inititate the creation and display of menu (0)
 
-        self.__root.mainloop() # Start the window
+        self.__root.mainloop()  # Start the window
 
-# Getters Start
+    # Getters Start
 
     def getMax(self):
         """
@@ -92,10 +99,12 @@ class Game():
         """
 
         val = 0
-        for y in range(self.__table.getRow()): # For every cell in the grid
+        for y in range(self.__table.getRow()):  # For every cell in the grid
             for x in range(self.__table.getCol()):
-                if self.__table.getGrid()[y][x].getState() > val: # If the value of current cell is higher than last saved value
-                    val = self.__table.getGrid()[y][x].getState() # Then update the highest value
+                # If the value of current cell is higher than last saved value
+                if self.__table.getGrid()[y][x].getState() > val:
+                    # Then update the highest value
+                    val = self.__table.getGrid()[y][x].getState()
         # self.__max = val
         return str(val)
 
@@ -107,7 +116,7 @@ class Game():
                 str: String of the time left to the game.
         """
 
-        return self.__timerThread.getTimer() # Gets string from Timer class in timer.py
+        return self.__timerThread.getTimer()  # Gets string from Timer class in timer.py
 
 # Getters End
 
@@ -145,19 +154,21 @@ class Game():
                 Table: Table object for table.py
         """
 
-        self.__cellCount = self.__items[4].get() # Gets the Cell count from the slider input in the in-game menu
-        return Table(self.__level, self.__cellCount, self.__cellCount) # Return the Table
+        # Gets the Cell count from the slider input in the in-game menu
+        self.__cellCount = self.__items[4].get()
+        # Return the Table
+        return Table(self.__level, self.__cellCount, self.__cellCount)
 
     def newTable(self):
         """
         Updates the interface as well as changes the current Table to a new one.
         """
 
-        self.__table = self.initTable() # Initialise a new table
+        self.__table = self.initTable()  # Initialise a new table
         self.updateHighscore()
-        self.__score = 0 # Reset scores after updating high score if needed
-        self.startCountdown() # Restart countdown
-        self.update() # Update the Display grid
+        self.__score = 0  # Reset scores after updating high score if needed
+        self.startCountdown()  # Restart countdown
+        self.update()  # Update the Display grid
 
     def frameDisplay(self):
         """
@@ -165,84 +176,86 @@ class Game():
         (Start menu, In-Game, Win / Lose Menu)
         """
 
-        for widget in self.__base.winfo_children(): # Destroy everything in self.__base to have a clean frame.
+        # Destroy everything in self.__base to have a clean frame.
+        for widget in self.__base.winfo_children():
             widget.destroy()
 
         # Changes title depending on Menu
 
-        if self.__display == 0: # Start Menu
+        if self.__display == 0:  # Start Menu
             title = "Just Get Ten"
 
         if self.__display == 2:
 
-            if self.__win: # Win Menu
+            if self.__win:  # Win Menu
                 title = "YOU WIN"
-            else: # Lose Menu
+            else:  # Lose Menu
                 title = "YOU LOSE"
 
-        if self.__display == 0 or self.__display == 2:  # Menus (Start, Win and Lose)
+        # Menus (Start, Win and Lose)
+        if self.__display == 0 or self.__display == 2:
 
-            self.__game = False # Game not in progress
+            self.__game = False  # Game not in progress
 
         # Menu Frame
 
-            self.__menuItems = [] # Creates a list of items in the menu to display them in a loop
+            self.__menuItems = []  # Creates a list of items in the menu to display them in a loop
 
-            self.__menuItems.append( # Title displaying the title variable contents
+            self.__menuItems.append(  # Title displaying the title variable contents
                 Label(self.__base, text=title, font=("Courier", int(60*self.__fontMult))))
 
-            self.__menuItems.append( # High score display
+            self.__menuItems.append(  # High score display
                 Label(self.__base, text="High Score : " + score.getHighScore(), font=("Courier", int(44*self.__fontMult))))
 
-            self.__menuItems.append( # Last score (0 on start menu)
+            self.__menuItems.append(  # Last score (0 on start menu)
                 Label(self.__base, text="Score : " + str(self.__score), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append(Button( # New Game button (Changes the menu to Game menu)
+            self.__menuItems.append(Button(  # New Game button (Changes the menu to Game menu)
                 self.__base, text="New Game", command=partial(self.changeMenu, 1), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append( # Select timer text
+            self.__menuItems.append(  # Select timer text
                 Label(self.__base, text="Select Time", font=("Courier", int(44*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Button to change default timer to 60
+            self.__menuItems.append(Button(  # Button to change default timer to 60
                 self.__base, text="1 min", command=partial(self.setDefaultTimer, 60), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Button to change defalt timer to 180
+            self.__menuItems.append(Button(  # Button to change defalt timer to 180
                 self.__base, text="3 min", command=partial(self.setDefaultTimer, 180), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Button to change default timer -1
+            self.__menuItems.append(Button(  # Button to change default timer -1
                 self.__base, text="Endless", command=partial(self.setDefaultTimer, -1), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append( # Select difficulty text
+            self.__menuItems.append(  # Select difficulty text
                 Label(self.__base, text="Select Difficulty", font=("Courier", int(44*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Changes level to 1
+            self.__menuItems.append(Button(  # Changes level to 1
                 self.__base, text="Easy", command=partial(self.setLevel, 1), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Changes level to 2
+            self.__menuItems.append(Button(  # Changes level to 2
                 self.__base, text="Hard", command=partial(self.setLevel, 2), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append(Button( # Changes level to 3
+            self.__menuItems.append(Button(  # Changes level to 3
                 self.__base, text="Harder", command=partial(self.setLevel, 3), font=("Courier", int(34*self.__fontMult))))
 
-            self.__menuItems.append( # Press to ESC to exit text
+            self.__menuItems.append(  # Press to ESC to exit text
                 Label(self.__base, text="Press ESC to exit", font=("Courier", int(30*self.__fontMult))))
 
-            for i in range(len(self.__menuItems)): # Display items in row with a loop
+            for i in range(len(self.__menuItems)):  # Display items in row with a loop
                 self.__menuItems[i].grid(row=i, column=0)
 
         # Menu Frame End
 
         if self.__display == 1:  # In-Game
 
-            self.__game = True # Game in-progress
-            self.__win = False # Restart the game so win set to False
-            self.__score = 0 # Score to 0
+            self.__game = True  # Game in-progress
+            self.__win = False  # Restart the game so win set to False
+            self.__score = 0  # Score to 0
 
         # Game Frame
 
             # Creation of Frame to contain canvas where the grid of the game will be drawn
 
-            self.__frame1 = Frame(self.__base) 
+            self.__frame1 = Frame(self.__base)
             self.__frame1.grid(row=0, column=0, )
 
             self.__canvas = Canvas(self.__frame1)
@@ -321,17 +334,17 @@ class Game():
 
         # Initialization of Game variables
 
-            self.__table = self.initTable() # Creates a new Table object
+            self.__table = self.initTable()  # Creates a new Table object
 
-            self.startCountdown() # Start the countdown with a Thread
+            self.startCountdown()  # Start the countdown with a Thread
 
-            self.__updateTimerThread = threading.Thread( # Creates another thread allowing the constant display update of the timer
+            self.__updateTimerThread = threading.Thread(  # Creates another thread allowing the constant display update of the timer
                 target=self.updateTimer, name="updateTimerThread")
-            self.__updateTimerThread.start() # Start the thread
+            self.__updateTimerThread.start()  # Start the thread
 
         # Init End
 
-            self.update() # Updates the labels and the grid (game rules) and displays it in the canvas
+            self.update()  # Updates the labels and the grid (game rules) and displays it in the canvas
 
     def changeMenu(self, displayState: int):
         """
@@ -341,26 +354,27 @@ class Game():
                 displayState (int): Value of the menu wanted to be displayed (0: Start Menu; 1: In-Game; 2: Win / Lose Menu)
         """
 
-        self.__display = displayState # Changes display value
-        self.frameDisplay() # Clears and Changes the widgets displayed depending on the display value
+        self.__display = displayState  # Changes display value
+        # Clears and Changes the widgets displayed depending on the display value
+        self.frameDisplay()
 
     def update(self):
         """
         Updates the grid using the game logic and draws it in the canvas and then updates labels.
         """
 
-        if self.__display == 1: # Only if in-game
+        if self.__display == 1:  # Only if in-game
 
-            self.__table.gravity() # Apply gravity to the cells in the grid
+            self.__table.gravity()  # Apply gravity to the cells in the grid
             # self.__table.displayTable()
-            self.drawGrid() # Draw the grid in the canvas
-            self.updateLabels() # Update the labels in the user interface
+            self.drawGrid()  # Draw the grid in the canvas
+            self.updateLabels()  # Update the labels in the user interface
 
-            self.__win = self.__table.win() # Check if the board has a winning condition
+            self.__win = self.__table.win()  # Check if the board has a winning condition
 
-            if self.__win == True: # If it does then change to Win Menu
+            if self.__win == True:  # If it does then change to Win Menu
 
-                self.changeMenu(2) # With self.__win = True
+                self.changeMenu(2)  # With self.__win = True
 
     def updateLabels(self):
         """
@@ -376,33 +390,36 @@ class Game():
         """
         Runs in a Thread. Constantly updates the timer label in the User interface. Also checks for lose condition.
         """
-        while self.__updateThread: # True except when exiting program
-            if self.getTimer() == "00:00": # If timer reaches 0 sec
+        while self.__updateThread:  # True except when exiting program
+            if self.getTimer() == "00:00":  # If timer reaches 0 sec
                 self.updateHighscore()
-                self.changeMenu(2) # Changes to Lose Menu (with self.__win = False)
-                self.__timerThread.stop() # Stops the timer thread.
-                break # Break the loop because Game ended
+                # Changes to Lose Menu (with self.__win = False)
+                self.changeMenu(2)
+                self.__timerThread.stop()  # Stops the timer thread.
+                break  # Break the loop because Game ended
 
             try:
-                self.__items[7].config(text=self.getTimer()) # Tries to change the test of the timer label in the user interface
+                # Tries to change the test of the timer label in the user interface
+                self.__items[7].config(text=self.getTimer())
 
-            except: # if exceptin raised (SystemExit)
-                self.__timerThread.stop() # Stops the timer thread.
-                break # Break the loop because Game exited
+            except:  # if exceptin raised (SystemExit)
+                self.__timerThread.stop()  # Stops the timer thread.
+                break  # Break the loop because Game exited
 
     def reset(self):
         """
         Stops the timer and start a new one with a new grid.
         """
-        self.__timerThread.stop() # Stop the timer thread
-        self.newTable() # Start new grid / game
+        self.__timerThread.stop()  # Stop the timer thread
+        self.newTable()  # Start new grid / game
 
     def startCountdown(self):
         """
         Creates a new timer object and start a thread.
         """
-        self.__timerThread = timer.TimerClass(self.__defaultTime) # Timer object with default time as timer value
-        self.__timerThread.start() # Start its thread
+        self.__timerThread = timer.TimerClass(
+            self.__defaultTime)  # Timer object with default time as timer value
+        self.__timerThread.start()  # Start its thread
 
     def updateClick(self, event):
         """
@@ -422,8 +439,8 @@ class Game():
         y = math.floor(((self.__mouseY) / (self.__height)) *
                        (self.__table.getRow()))
 
-        if event.x_root < self.__width: # If the mouse is within the canvas
-            self.highlightCells(x, y) # Then apply the highlight function
+        if event.x_root < self.__width:  # If the mouse is within the canvas
+            self.highlightCells(x, y)  # Then apply the highlight function
 
     def escapeKey(self, event=None):
         """
@@ -440,7 +457,7 @@ class Game():
         # File "C:\Users\yoann\AppData\Local\Programs\Python\Python310\lib\tkinter\__init__.py", line 1921, in __call__
         # return self.func(*args)
 
-        self.destroy() # Exit Tkinter window and program
+        self.destroy()  # Exit Tkinter window and program
 
     def highlightCells(self, x: int, y: int):
         """
@@ -453,50 +470,56 @@ class Game():
                 y (int): Y position of a cell within the grid.
         """
 
-        if self.__game: # if state of game active
+        if self.__game:  # if state of game active
 
             if self.__table.getSelected() == True and self.__table.getGrid()[y][x].getHighlight() == False:
-            # if selected cell is not highlighted when other cells are already selected
+                # if selected cell is not highlighted when other cells are already selected
 
-                for item in self.__table.getPositions(): # For previously highlighted cells
-                
+                for item in self.__table.getPositions():  # For previously highlighted cells
+
                     self.__table.getGrid()[item[1]][item[0]].setHighlight(
                         False)  # remove highlight
-                self.__table.setSelected(False) # No cells highlighted anymore
+                self.__table.setSelected(False)  # No cells highlighted anymore
 
-            else: 
+            else:
 
                 neighborPos = self.__table.updateNeighborsPos(
                     x, y)  # List of x and y of all neighbors
-                if len(neighborPos) > 1: # If there's at least one neighbor
+                if len(neighborPos) > 1:  # If there's at least one neighbor
 
                     # Boolean of whether selected cell is highlighted or not
                     val = self.__table.getGrid()[y][x].getHighlight()
 
-                    if val: # If selected cell is already highlighted
+                    if val:  # If selected cell is already highlighted
 
-                        self.addScore(len(neighborPos) * self.__table.getGrid()[y][x].getState())
+                        self.addScore(len(neighborPos) *
+                                      self.__table.getGrid()[y][x].getState())
                         # Add to the score the number of neighbors (including selected cell) times the value of the selected cell
 
-                        self.removeCells(neighborPos[1:]) # Remove every cell except selected one
-                        self.__table.getGrid()[y][x].setHighlight(False) # Remove highlight from selected cell
-                        self.addUp((x, y)) # Add 1 to the value of the selected cell
+                        # Remove every cell except selected one
+                        self.removeCells(neighborPos[1:])
+                        self.__table.getGrid()[y][x].setHighlight(
+                            False)  # Remove highlight from selected cell
+                        # Add 1 to the value of the selected cell
+                        self.addUp((x, y))
 
-                        self.__table.setSelected(False) # No cells highlighted anymore
+                        # No cells highlighted anymore
+                        self.__table.setSelected(False)
 
-                    if val == False: # if selected cell is not highlighted
+                    if val == False:  # if selected cell is not highlighted
 
                         for item in neighborPos:
                             self.__table.getGrid()[item[1]][item[0]].setHighlight(
                                 True)  # highlight every cell in neighborhood
 
-                        self.__table.setSelected(True) # Cells are now highlighted
+                        # Cells are now highlighted
+                        self.__table.setSelected(True)
 
-                del neighborPos # Delete neighborPos for memory
+                del neighborPos  # Delete neighborPos for memory
 
-            self.update() # Update the grid
+            self.update()  # Update the grid
 
-    def removeCells(self, items: list[tuple[int,int]]):
+    def removeCells(self, items: list[tuple[int, int]]):
         """
         Change value of every cell in the list to 0.
 
@@ -515,10 +538,13 @@ class Game():
                 item (tuple of int): Tuple of the X, Y position of the selected cell.
         """
 
-        val = self.__table.getGrid()[item[1]][item[0]].getState() # Gets current value
-        self.__table.getGrid()[item[1]][item[0]].setState(val+1) # Adds one to value
+        # Gets current value
+        val = self.__table.getGrid()[item[1]][item[0]].getState()
+        self.__table.getGrid()[item[1]][item[0]].setState(
+            val+1)  # Adds one to value
 
-        self.__table.getGrid()[item[1]][item[0]].changeColor() # Updates the color
+        # Updates the color
+        self.__table.getGrid()[item[1]][item[0]].changeColor()
 
     def drawGrid(self):
         """
@@ -526,7 +552,7 @@ class Game():
         """
 
         coef = ((self.__table.getCol()/100)+1)*1
-        self.__canvas.delete("all") # Cleans the canvas
+        self.__canvas.delete("all")  # Cleans the canvas
 
         # Gets number of columns and rows
         tRow = self.__table.getRow()
@@ -536,18 +562,18 @@ class Game():
         sizeW = self.__width/tCol
         sizeH = self.__height/tRow
 
-        for row in range(tRow): # For every cell position
+        for row in range(tRow):  # For every cell position
             for col in range(tCol):
 
                 color = self.__table.getGrid()[row][col].getColor()
                 text = self.__table.getGrid()[row][col].getState()
                 highlighted = self.__table.getGrid()[row][col].getHighlight()
 
-                if highlighted: # If cell highlighted then draw rectangle with black background
+                if highlighted:  # If cell highlighted then draw rectangle with black background
                     self.__canvas.create_rectangle(
                         col*sizeW+(10/coef), row*sizeH+(10/coef), col*sizeW+sizeW-(10/coef), row*sizeH+sizeH-(10/coef), fill="black", outline="black")
-                
-                else: # If not highlighted then draw rectangle with the cell color as background
+
+                else:  # If not highlighted then draw rectangle with the cell color as background
                     self.__canvas.create_rectangle(
                         col*sizeW, row*sizeH, col*sizeW+sizeW, row*sizeH+sizeH, fill=color, outline="black")
 
@@ -569,15 +595,15 @@ class Game():
         """
 
         try:
-            self.__timerThread.stop() # Tries to stop the timer thread
+            self.__timerThread.stop()  # Tries to stop the timer thread
         except:
             pass
 
-        self.__updateThread = False # Stops the updateTimer thread
+        self.__updateThread = False  # Stops the updateTimer thread
         self.updateHighscore()
-        self.__root.destroy() # Destroy window
+        self.__root.destroy()  # Destroy window
 
-        exit() # Exit program
+        exit()  # Exit program
 
     def addScore(self, score: int):
         """
@@ -590,5 +616,6 @@ class Game():
         self.__score = self.__score + score
 
 # Methods End
+
 
 g = Game(800, 800)
