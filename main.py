@@ -1,13 +1,14 @@
-from os import error
-from types import NoneType
+# from os import error
+# from types import NoneType
+
 from table import *
 import score
 import timer
 
 from random import *
 from tkinter import *
-from tkinter import ttk
-from time import sleep, time
+# from tkinter import ttk
+# from time import sleep, time
 import math
 import threading
 from functools import partial
@@ -156,7 +157,7 @@ class Game():
 
         # Gets the Cell count from the slider input in the in-game menu
         self.__cellCount = self.__items[4].get()
-        # Return the Table
+        
         return Table(self.__level, self.__cellCount, self.__cellCount)
 
     def newTable(self):
