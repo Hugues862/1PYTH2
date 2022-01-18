@@ -59,10 +59,11 @@ class Game():
 
         self.__root = Tk()
         self.__root.configure(background='white')
-        # Binds buttons / keys to methods
-        # Left click initiate self.updateClick
+
+        #! Binds buttons / keys to methods
+        #! Left click initiate self.updateClick
         self.__root.bind('<Button-1>', self.updateClick)
-        # Escape key initiate self.excapeKey
+        #! Escape key initiate self.excapeKey
         self.__root.bind('<Escape>', self.escapeKey)
         self.__root.attributes("-fullscreen", True)
 
@@ -324,17 +325,18 @@ class Game():
 
         # Initialization of Game variables
 
-            self.__table = self.initTable()  # Creates a new Table object
+            self.__table = self.initTable()  # ! Creates a new Table object
 
-            self.startCountdown()  # Start the countdown with a Thread
+            self.startCountdown()  # ! Start the countdown with a Thread
 
-            self.__updateTimerThread = threading.Thread(  # Creates another thread allowing the constant display update of the timer
+            #! Creates another thread allowing the constant display update of the timer
+            self.__updateTimerThread = threading.Thread(
                 target=self.updateTimer, name="updateTimerThread")
             self.__updateTimerThread.start()  # Start the thread
 
         # Init End
 
-            self.update()  # Updates the labels and the grid (game rules) and displays it in the canvas
+            self.update()  # ! Updates the labels and the grid (game rules) and displays it in the canvas
 
     def changeMenu(self, displayState: int):
         """
@@ -355,12 +357,12 @@ class Game():
 
         if self.__display == 1:  # Only if in-game
 
-            self.__table.gravity()  # Apply gravity to the cells in the grid
+            self.__table.gravity()  # ! Apply gravity to the cells in the grid
             # self.__table.displayTable()
-            self.drawGrid()  # Draw the grid in the canvas
-            self.updateLabels()  # Update the labels in the user interface
+            self.drawGrid()  # ! Draw the grid in the canvas
+            self.updateLabels()  # ! Update the labels in the user interface
 
-            self.__win = self.__table.win()  # Check if the board has a winning condition
+            self.__win = self.__table.win()  # ! Check if the board has a winning condition
 
             if self.__win == True:  # If it does then change to Win Menu
 
