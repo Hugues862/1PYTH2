@@ -14,17 +14,6 @@ import threading
 from functools import partial
 
 
-"""
-        Summary
-        
-            Parameters:
-            
-            
-            Returns:
-            
-"""
-
-
 def clear():
     """
     Clears the console for better clarity and reading.
@@ -617,6 +606,5 @@ class Game():
         self.__score = self.__score + score
 
 # Methods End
-
 
 g = Game(800, 800)

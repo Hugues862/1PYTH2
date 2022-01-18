@@ -10,7 +10,7 @@ def getHighScore():
         return lines[0] # return the first line
 
 
-def setScore(score):
+def setScore(score: int):
     """
     Sets a new high score by rewriting score.txt.
     
