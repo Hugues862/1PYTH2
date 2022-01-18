@@ -146,7 +146,7 @@ class Game():
 
         # Gets the Cell count from the slider input in the in-game menu
         self.__cellCount = self.__items[4].get()
-        
+
         return Table(self.__level, self.__cellCount, self.__cellCount)
 
     def newTable(self):
@@ -416,7 +416,7 @@ class Game():
         Gets the mouse position within the window and uses it to update the grid.
 
             Parameters:
-                event ([type]): [description]
+                event (tk.event): stores event data like mouse pos
         """
 
         # Mouse X Y position in pixels
@@ -424,11 +424,13 @@ class Game():
         self.__mouseY = event.y
 
         # X Y position of the cells in the grid from the mouse position
+        # 800px 750px = [7,7]
         x = math.floor(((self.__mouseX) / (self.__width)) *
                        (self.__table.getCol()))
         y = math.floor(((self.__mouseY) / (self.__height)) *
                        (self.__table.getRow()))
 
+        # Prevents from selecting a cell and causing a error if clicking outside the canvas
         if event.x_root < self.__width:  # If the mouse is within the canvas
             self.highlightCells(x, y)  # Then apply the highlight function
 
@@ -462,8 +464,8 @@ class Game():
 
         if self.__game:  # if state of game active
 
+            # if selected cell is not highlighted when other cells are already selected
             if self.__table.getSelected() == True and self.__table.getGrid()[y][x].getHighlight() == False:
-                # if selected cell is not highlighted when other cells are already selected
 
                 for item in self.__table.getPositions():  # For previously highlighted cells
 
@@ -505,7 +507,7 @@ class Game():
                         # Cells are now highlighted
                         self.__table.setSelected(True)
 
-                del neighborPos  # Delete neighborPos for memory
+                del neighborPos  # Delete neighborPos from memory (precaution)
 
             self.update()  # Update the grid
 
@@ -606,5 +608,6 @@ class Game():
         self.__score = self.__score + score
 
 # Methods End
+
 
 g = Game(800, 800)
