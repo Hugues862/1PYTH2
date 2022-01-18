@@ -1,6 +1,7 @@
 
 import threading
 
+
 class TimerClass(threading.Thread):
 
     def __init__(self, count: int, name="timerThread"):
@@ -13,8 +14,8 @@ class TimerClass(threading.Thread):
         """
 
         threading.Thread.__init__(self)
-        self.__event = threading.Event() # TO COMMENT
-        self.__count = count # Count that will decrease until it reaches 0
+        self.__event = threading.Event()
+        self.__count = count  # Count that will decrease until it reaches 0
         self.__name = name
         self.__timer = "Endless"
         # Endless as default because if count = -1, then it doesn't enter the loop later on to modify the timer
@@ -29,7 +30,7 @@ class TimerClass(threading.Thread):
                 str: Name of the timer.
         """
         return self.__name
-    
+
     def getTimer(self):
         """
         Gets the remaining time.
@@ -74,17 +75,20 @@ class TimerClass(threading.Thread):
         Used in a Thread.
         """
 
-        while self.__count > 0 and not self.__event.is_set(): # if count is not 0 or -1 (Endless) And the "event" is not set
-            self.__count -= 1 # Decrease the count
-            mins, secs = divmod(self.__count, 60) # Change the count value in seconds into minutes and seconds
-            self.__timer = '{:02d}:{:02d}'.format(mins, secs) # Write the time remaining in __timer
-            self.__event.wait(1) # Wait a second
+        # if count is not 0 or -1 (Endless) And the "event" is not set
+        while self.__count > 0 and not self.__event.is_set():
+            self.__count -= 1  # Decrease the count
+            # Change the count value in seconds into minutes and seconds
+            mins, secs = divmod(self.__count, 60)
+            # Write the time remaining in __timer
+            self.__timer = '{:02d}:{:02d}'.format(mins, secs)
+            self.__event.wait(1)  # Wait a second
 
     def stop(self):
         """
         Stops the events of the object to stop the thread.
         """
-        self.__event.set() # TO COMMENT
-        
+        self.__event.set()
+
 
 # End
